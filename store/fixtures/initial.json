@@ -1,5 +1,14 @@
 [
   {
+    "model": "store.DataAfterPurchase",
+    "pk": 1,
+    "fields": {
+      "midi_link": "lskjfld.com",
+      "wav_link": "lkasjdflk.com",
+      "flac_link": "lkjfgl.com"
+    }
+  },
+  {
     "model": "store.product",
     "pk": 1,
     "fields": {

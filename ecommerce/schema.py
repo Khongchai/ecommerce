@@ -9,12 +9,12 @@ from store.models import Product, DataAfterPurchase
 class ProductType(DjangoObjectType):
     class Meta: 
         model = Product
-        fields = ("name", "price_usd", "image_link", "authenticated_data")
+        fields = ("name", "price_usd", "image_link", "free", "authenticated_data")
 
 class DataAfterPurchaseType(DjangoObjectType):
     class Meta: 
         model = DataAfterPurchase
-        fields = ("midi_link", "wav_link", "flac_link")
+        fields = ("midi_link", "wav_link", "flac_link", "pdf_link")
 
 
 class Query(graphene.ObjectType):
@@ -24,7 +24,6 @@ class Query(graphene.ObjectType):
     all_data_after_purchase_only = graphene.List(DataAfterPurchaseType)
 
     def resolve_all_products_info(root, info):
-        print(info)
         return Product.objects.select_related("authenticated_data").all()
 
     def resolve_product_by_name(root, info, name):

@@ -4,15 +4,19 @@ class Product(models.Model):
     name = models.CharField(max_length=200)
     price_usd = models.DecimalField(max_digits=7, decimal_places=2)
     image_link = models.URLField(max_length = 200)
-    authenticated_data = models.OneToOneField("DataAfterPurchase", on_delete=models.CASCADE,  null=True, blank=True, related_name="product")
+    #when this field is delete, set Product to null
+    authenticated_data = models.OneToOneField("DataAfterPurchase", on_delete=models.SET_NULL,  null=True, blank=True, related_name="product")
+    free = models.BooleanField(default=False)
+    
 
     def __str__(self):
         return self.name
 
 class DataAfterPurchase(models.Model):
-    midi_link = models.URLField(max_length = 200)
-    wav_link = models.URLField(max_length = 200)
-    flac_link = models.URLField(max_length = 200)
+    midi_link = models.URLField(max_length = 200, blank=True, null=True)
+    wav_link = models.URLField(max_length = 200, blank=True, null=True)
+    flac_link = models.URLField(max_length = 200, blank=True, null=True)
+    pdf_link = models.URLField(max_length = 200, blank=True, null=True)
 
     @property
     def name(self):

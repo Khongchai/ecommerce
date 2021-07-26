@@ -24,5 +24,5 @@ from .schema import schema
 urlpatterns = [
     path('admin/', admin.site.urls),
     #Change graphiql to false if you do not want to use the GraphiQL API browser
-    path('graphql', GraphQLView.as_view(graphiql=True, schema=schema))
+    path('graphql', csrf_exempt(GraphQLView.as_view(graphiql=True, schema=schema)))
 ]
