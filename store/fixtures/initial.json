@@ -1,15 +1,12 @@
 [
-
-     {
-        "model":"store.product",
-        "pk":1,
-        "fields":{
-           "name":"Vivaldi Concerto in D minor",
-           "price_usd": 20,
-           "image_link": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Vivaldi.jpg/220px-Vivaldi.jpg",
-           "authenticated_data": 1
-        }
-     }
-
-
- ]
+  {
+    "model": "store.product",
+    "pk": 1,
+    "fields": {
+      "name": "Vivaldi Concerto in D minor",
+      "price_usd": 20,
+      "image_link": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Vivaldi.jpg/220px-Vivaldi.jpg",
+      "authenticated_data": 1
+    }
+  }
+]

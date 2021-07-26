@@ -16,6 +16,7 @@ class DataAfterPurchaseType(DjangoObjectType):
         model = DataAfterPurchase
         fields = ("midi_link", "wav_link", "flac_link")
 
+
 class Query(graphene.ObjectType):
     all_products_info = graphene.List(ProductType)
     product_by_name = graphene.Field(ProductType, name=graphene.String(required=True))
