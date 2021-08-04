@@ -74,7 +74,8 @@ GRAPHQL_JWT = {
     "JWT_ALLOW_ANY_CLASSES": [
         "graphql_auth.mutations.Register",
         "graphql_auth.mutations.VerifyAccount",
-        "graphql_auth.mutations.ObtainJSONWebToken"
+        "graphql_auth.mutations.ObtainJSONWebToken",
+        "graphql_auth.mutations.RevokeToken",
     ],
 }
 

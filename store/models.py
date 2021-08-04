@@ -7,7 +7,6 @@ class Product(models.Model):
     #when this field is delete, set Product to null
     authenticated_data = models.OneToOneField("DataAfterPurchase", on_delete=models.SET_NULL,  null=True, blank=True, related_name="product")
     free = models.BooleanField(default=False)
-    
 
     def __str__(self):
         return self.name
