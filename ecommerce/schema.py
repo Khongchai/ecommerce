@@ -6,18 +6,28 @@ import graphene
 from graphene_django import DjangoObjectType
 from store.models import Product, DataAfterPurchase
 
+from graphql_auth.schema import UserQuery, MeQuery
+from graphql_auth import mutations
+
+
 class ProductType(DjangoObjectType):
     class Meta: 
         model = Product
         fields = ("name", "price_usd", "image_link", "free", "authenticated_data")
+
 
 class DataAfterPurchaseType(DjangoObjectType):
     class Meta: 
         model = DataAfterPurchase
         fields = ("midi_link", "wav_link", "flac_link", "pdf_link")
 
+class AuthMutation(graphene.ObjectType):
+    register = mutations.Register.Field()
+    verify_account = mutations.VerifyAccount.Field()
+    token_auth = mutations.ObtainJSONWebToken.Field()
+    update_account = mutations.UpdateAccount.Field()
 
-class Query(graphene.ObjectType):
+class Query(UserQuery, MeQuery, graphene.ObjectType):
     all_products_info = graphene.List(ProductType)
     product_by_name = graphene.Field(ProductType, name=graphene.String(required=True))
 
@@ -36,4 +46,9 @@ class Query(graphene.ObjectType):
     def all_data_after_purchase_only(root, info):
         return DataAfterPurchase.objects.all()
 
-schema = graphene.Schema(query=Query)
+class Mutation(AuthMutation, graphene.ObjectType):
+    pass
+
+schema = graphene.Schema(query=Query, mutation=Mutation)
+
+
