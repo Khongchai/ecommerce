@@ -21,6 +21,12 @@ class DataAfterPurchaseType(DjangoObjectType):
         model = DataAfterPurchase
         fields = ("midi_link", "wav_link", "flac_link", "pdf_link")
 
+# class CustomRegisterFiledType(DjangoObjectType):
+#     class Meta:
+#         model = CustomUser
+#         fields = (mutations.Register.Field(), "is_student")
+
+
 class AuthMutation(graphene.ObjectType):
     register = mutations.Register.Field()
     verify_account = mutations.VerifyAccount.Field()
@@ -46,7 +52,7 @@ class Query(UserQuery, MeQuery, graphene.ObjectType):
     def all_data_after_purchase_only(root, info):
         return DataAfterPurchase.objects.all()
 
-class Mutation(AuthMutation, graphene.ObjectType):
+class Mutation(AuthMutation,  graphene.ObjectType):
     pass
 
 schema = graphene.Schema(query=Query, mutation=Mutation)
