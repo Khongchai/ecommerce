@@ -58,7 +58,6 @@ MIDDLEWARE = [
 ]
 
 
-
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
     'https://localhost:3000',
@@ -94,8 +93,10 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
-    }
+        }
 }
+
+CORS_ALLOW_CREDENTIALS = True
 
 
 # Password validation
@@ -140,7 +141,6 @@ STATIC_URL = '/static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
 #Graphql config
 AUTH_USER_MODEL = "users.CustomUser"
 
@@ -152,10 +152,12 @@ AUTHENTICATION_BACKENDS = [
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 GRAPHQL_JWT = {
-    "JWT_VERIFY_EXPIRATION": True,
+    "JWT_VERIFY_EXPIRATION": False,
 
     # optional
-    "JWT_LONG_RUNNING_REFRESH_TOKEN": True,
+    # TODO set this up
+    "JWT_LONG_RUNNING_REFRESH_TOKEN": False,
+    
     "JWT_ALLOW_ANY_CLASSES": [
         "graphql_auth.mutations.Register",
         "graphql_auth.mutations.VerifyAccount",
@@ -169,13 +171,6 @@ GRAPHENE = {
     ],
 }
 
-# REGISTER_MUTATION_FIELDS = {
-#     "email": "String",
-#     "username": "String",
-#     "password1": "String",
-#     "password2": "String",
-#     "is_student": "Boolean",
-# }
 GRAPHQL_AUTH = {
     "REGISTER_MUTATION_FIELDS": {
         "email": "String",
