@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     "store",
     "graphql_auth",
     "users",
-    'graphql_jwt.refresh_token.apps.RefreshTokenConfig',
 ]
 
 
@@ -153,10 +152,6 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 GRAPHQL_JWT = {
     "JWT_VERIFY_EXPIRATION": False,
-
-    # optional
-    # TODO set this up
-    "JWT_LONG_RUNNING_REFRESH_TOKEN": False,
     
     "JWT_ALLOW_ANY_CLASSES": [
         "graphql_auth.mutations.Register",

@@ -32,6 +32,7 @@ class AuthMutation(graphene.ObjectType):
     verify_account = mutations.VerifyAccount.Field()
     token_auth = mutations.ObtainJSONWebToken.Field()
     update_account = mutations.UpdateAccount.Field()
+    refresh_token = mutations.RefreshToken.Field()
 
 class Query(UserQuery, MeQuery, graphene.ObjectType):
     all_products_info = graphene.List(ProductType)
@@ -52,7 +53,7 @@ class Query(UserQuery, MeQuery, graphene.ObjectType):
     def all_data_after_purchase_only(root, info):
         return DataAfterPurchase.objects.all()
 
-class Mutation(AuthMutation,  graphene.ObjectType):
+class Mutation(AuthMutation, graphene.ObjectType):
     pass
 
 schema = graphene.Schema(query=Query, mutation=Mutation)
