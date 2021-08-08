@@ -1,0 +1,98 @@
+[
+  {
+    "model": "store.Composition",
+    "pk": 1,
+    "fields": {
+      "name": "Korngold Violin Concerto in D Major",
+      "composers": [9]
+    }
+  },
+  {
+    "model": "store.Composition",
+    "pk": 2,
+    "fields": {
+      "name": "Vivaldi Concerto in A Minor",
+      "composers": [12]
+    }
+  },
+  {
+    "model": "store.Composition",
+    "pk": 3,
+    "fields": {
+      "name": "Vivaldi Four Seasons - Summer",
+      "composers": [12]
+    }
+  },
+  {
+    "model": "store.Composition",
+    "pk": 4,
+    "fields": {
+      "name": "A Song From Secret Garden",
+      "composers": [6]
+    }
+  },
+  {
+    "model": "store.Composition",
+    "pk": 5,
+    "fields": {
+      "name": "Theme from Schindler's List",
+      "composers": [4]
+    }
+  },
+  {
+    "model": "store.Composition",
+    "pk": 6,
+    "fields": {
+      "name": "Remembrance",
+      "composers": [4]
+    }
+  },
+  {
+    "model": "store.Composition",
+    "pk": 7,
+    "fields": {
+      "name": "Mozart Piano Concerto No. 21",
+      "composers": [1]
+    }
+  },
+  {
+    "model": "store.Composition",
+    "pk": 8,
+    "fields": {
+      "name": "Meditation",
+      "composers": [7]
+    }
+  },
+  {
+    "model": "store.Composition",
+    "pk": 9,
+    "fields": {
+      "name": "Zegeunderweisen (Gypsy Air)",
+      "composers": [5]
+    }
+  },
+  {
+    "model": "store.Composition",
+    "pk": 10,
+    "fields": {
+      "name": "Brahms Violin Sonata No. 1",
+      "composers": [10]
+    }
+  },
+  {
+    "model": "store.Composition",
+    "pk": 11,
+    "fields": {
+      "name": "Ladies in Lavender Main Theme",
+      "composers": [2]
+    }
+  },
+  {
+    "model": "store.Composition",
+    "pk": 12,
+    "fields": {
+      "name": "Broken",
+      "composers": [13]
+    }
+  }
+]

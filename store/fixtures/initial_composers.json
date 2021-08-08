@@ -1,0 +1,93 @@
+[
+  {
+    "model": "store.Composer",
+    "pk": 1,
+    "fields": {
+      "name": "Wolfgang Amadeus Mozart"
+    }
+  },
+  {
+    "model": "store.Composer",
+    "pk": 2,
+    "fields": {
+      "name": "Nigel Hess"
+    }
+  },
+  {
+    "model": "store.Composer",
+    "pk": 3,
+    "fields": {
+      "name": "Charles-Camille Saint-Saëns"
+    }
+  },
+  {
+    "model": "store.Composer",
+    "pk": 4,
+    "fields": {
+      "name": "John Towner Williams"
+    }
+  },
+  {
+    "model": "store.Composer",
+    "pk": 5,
+    "fields": {
+      "name": "Pablo de Sarasate"
+    }
+  },
+  {
+    "model": "store.Composer",
+    "pk": 6,
+    "fields": {
+      "name": "Rolf Løvland"
+    }
+  },
+  {
+    "model": "store.Composer",
+    "pk": 7,
+    "fields": {
+      "name": "Jules Émile Frédéric Massenet"
+    }
+  },
+  {
+    "model": "store.Composer",
+    "pk": 8,
+    "fields": {
+      "name": "Dmitri Kabalevsky"
+    }
+  },
+  {
+    "model": "store.Composer",
+    "pk": 9,
+    "fields": {
+      "name": "Erich Wolfgang Korngold"
+    }
+  },
+  {
+    "model": "store.Composer",
+    "pk": 10,
+    "fields": {
+      "name": "Johannes Brahms"
+    }
+  },
+  {
+    "model": "store.Composer",
+    "pk": 11,
+    "fields": {
+      "name": "Pyotr Ilyich Tchaikovsky"
+    }
+  },
+  {
+    "model": "store.Composer",
+    "pk": 12,
+    "fields": {
+      "name": "Antonio Lucio Vivaldi"
+    }
+  },
+  {
+    "model": "store.Composer",
+    "pk": 13,
+    "fields": {
+      "name": "Khongchai Greesuradej"
+    }
+  }
+]

@@ -10,3 +10,6 @@ Vivaldi concerto in A minor 1st mvt, Vivaldi Four Seasons - Summer, Broken, A So
 Four Seasons Largo, Schindler's List Remembrance (free), Schindler's List theme (free), A song from a secret garden (free), 
 Kabalevsky Violin Concerto in C Major 1st Movement, Brahms Violin Sonata No. 1 Allegro (free), Zeigenerweisen (free), Ladies in Lavender (free),
 Introduction and Rondo (free), Meditation (not free, but fix it).
+
+add with composer name added to each track, which means adding the composer to the database,
+create a new fixture with the name of the composers as well, 
