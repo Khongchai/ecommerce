@@ -6,6 +6,7 @@ from graphene_django import DjangoObjectType
 from store.models import Product, DataAfterPurchase, Composer, Composition
 from graphql_auth.schema import UserQuery, MeQuery
 from graphql_auth import mutations
+from django.contrib.postgres.search import SearchQuery, SearchVector
 
 
 class ProductType(DjangoObjectType):
@@ -68,8 +69,10 @@ class Query(UserQuery, MeQuery, ComposerQuery, CompositionQuery, graphene.Object
     product_by_name = graphene.Field(ProductType, name=graphene.String(required=True))
 
     def resolve_all_products_info(root, info, search):
-        all_products = Product.objects.select_related("authenticated_data").all()
-        filtered_products = all_products.filter(name__icontains=search) if search else all_products
+        all_products = Product.objects.select_related("composition").all()
+        filtered_products = all_products.annotate(
+                            search=SearchVector("composition__name", "composition__composers__name", config="unaccent")
+                            ).filter(search__icontains=search)
         return filtered_products
 
     def resolve_product_by_name(root, info, name):

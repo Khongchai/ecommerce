@@ -1,15 +1,2 @@
 https://cloudinary.com/documentation/control_access_to_media << after user purchased
 
-
-
-Start with the bottom, all Product should have their own data, urls can just be random for now.
-TODO: write fixtures for parts of the actual data.
-
-Accomp list: => Korngold Violin Concerto, Vivaldi Violin Concerto in A minor 3rd mvt, Vivaldi Violin Concerto in A Minor 2nd mvt,
-Vivaldi concerto in A minor 1st mvt, Vivaldi Four Seasons - Summer, Broken, A Song From Secret Garden, Vivaldi 
-Four Seasons Largo, Schindler's List Remembrance (free), Schindler's List theme (free), A song from a secret garden (free), 
-Kabalevsky Violin Concerto in C Major 1st Movement, Brahms Violin Sonata No. 1 Allegro (free), Zeigenerweisen (free), Ladies in Lavender (free),
-Introduction and Rondo (free), Meditation (not free, but fix it).
-
-add with composer name added to each track, which means adding the composer to the database,
-create a new fixture with the name of the composers as well, 
