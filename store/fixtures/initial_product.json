@@ -1,0 +1,122 @@
+[
+  {
+    "model": "store.product",
+    "pk": 1,
+    "fields": {
+      "price_usd": 15,
+      "image_link": "https://upload.wikimedia.org/wikipedia/commons/a/a4/Erich_Wolfgang_Korngold_01.jpg",
+      "composition": 1,
+      "free": false
+    }
+  },
+  {
+    "model": "store.product",
+    "pk": 2,
+    "fields": {
+      "price_usd": 10,
+      "image_link": "https://media.wired.com/photos/5d7bf8410a30b000089d5b31/125:94/w_1682,h_1265,c_limit/gear_vivaldi_582868750.jpg",
+      "composition": 2,
+      "free": false
+    }
+  },
+  {
+    "model": "store.product",
+    "pk": 3,
+    "fields": {
+      "price_usd": 10,
+      "image_link": "https://media.wired.com/photos/5d7bf8410a30b000089d5b31/125:94/w_1682,h_1265,c_limit/gear_vivaldi_582868750.jpg",
+      "composition": 3,
+      "free": false
+    }
+  },
+  {
+    "model": "store.product",
+    "pk": 4,
+    "fields": {
+      "price_usd": 0,
+      "image_link": "https://img.koreatimes.co.kr/upload/newsV2/images/201905/fc1ffe317a6b46c4ab9e5406b1a1c3ac.jpg/dims/resize/740/optimize",
+      "composition": 4,
+      "free": true
+    }
+  },
+  {
+    "model": "store.product",
+    "pk": 5,
+    "fields": {
+      "price_usd": 0,
+      "image_link": "https://media.newyorker.com/photos/5ee699d1044afe4ecdbf6784/master/pass/Ross-JohnWilliams01.jpg",
+      "composition": 5,
+      "free": true
+    }
+  },
+  {
+    "model": "store.product",
+    "pk": 6,
+    "fields": {
+      "price_usd": 0,
+      "image_link": "https://media.newyorker.com/photos/5ee699d1044afe4ecdbf6784/master/pass/Ross-JohnWilliams01.jpg",
+      "composition": 6,
+      "free": true
+    }
+  },
+  {
+    "model": "store.product",
+    "pk": 7,
+    "fields": {
+      "price_usd": 10,
+      "image_link": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Wolfgang-amadeus-mozart_1.jpg/799px-Wolfgang-amadeus-mozart_1.jpg",
+      "composition": 7,
+      "free": false
+    }
+  },
+  {
+    "model": "store.product",
+    "pk": 8,
+    "fields": {
+      "price_usd": 0,
+      "image_link": "https://upload.wikimedia.org/wikipedia/commons/9/95/Massenet-1880-by-Pierre-Petit.jpg",
+      "composition": 8,
+      "free": true
+    }
+  },
+  {
+    "model": "store.product",
+    "pk": 9,
+    "fields": {
+      "price_usd": 0,
+      "image_link": "https://upload.wikimedia.org/wikipedia/commons/6/6e/Sarasate.gif",
+      "composition": 9,
+      "free": true
+    }
+  },
+  {
+    "model": "store.product",
+    "pk": 10,
+    "fields": {
+      "price_usd": 0,
+      "image_link": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Johannes_Brahms_1853.jpg/435px-Johannes_Brahms_1853.jpg",
+      "composition": 10,
+      "free": true
+    }
+  },
+  {
+    "model": "store.product",
+    "pk": 11,
+    "fields": {
+      "price_usd": 0,
+      "image_link": "https://assets.classicfm.com/2010/48/nigel-hess-1291375199-article-0.jpg",
+      "composition": 11,
+      "free": true
+    }
+  },
+  {
+    "model": "store.product",
+    "pk": 12,
+    "fields": {
+      "price_usd": 0,
+      "image_link": "https://assets.classicfm.com/2010/48/nigel-hess-1291375199-article-0.jpg",
+      "composition": 12,
+      "free": true
+    }
+  }
+]

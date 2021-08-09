@@ -1,6 +1,6 @@
 [
   {
-    "models": "store.dataafterpurchase",
+    "model": "store.dataafterpurchase",
     "pk": 1,
     "fields": {
       "midi_link": "https://via.placeholder.com/500.png?text=korngold+mvt1+link+placeholder",
@@ -11,7 +11,7 @@
     }
   },
   {
-    "models": "store.dataafterpurchase",
+    "model": "store.dataafterpurchase",
     "pk": 2,
     "fields": {
       "midi_link": "https://via.placeholder.com/500.png?text=korngold+mvt2+link+placeholder",
@@ -22,7 +22,7 @@
     }
   },
   {
-    "models": "store.dataafterpurchase",
+    "model": "store.dataafterpurchase",
     "pk": 3,
     "fields": {
       "midi_link": "https://via.placeholder.com/500.png?text=korngold+mvt3+link+placeholder",
@@ -33,7 +33,7 @@
     }
   },
   {
-    "models": "store.dataafterpurchase",
+    "model": "store.dataafterpurchase",
     "pk": 4,
     "fields": {
       "midi_link": "https://via.placeholder.com/500.png?text=Vivalid+concerto+aMinor+mvt1+link+placeholder",
@@ -44,7 +44,7 @@
     }
   },
   {
-    "models": "store.dataafterpurchase",
+    "model": "store.dataafterpurchase",
     "pk": 5,
     "fields": {
       "midi_link": "https://via.placeholder.com/500.png?text=Vivalid+concerto+aMinor+mvt3+link+placeholder",
@@ -55,7 +55,7 @@
     }
   },
   {
-    "models": "store.dataafterpurchase",
+    "model": "store.dataafterpurchase",
     "pk": 6,
     "fields": {
       "midi_link": "https://via.placeholder.com/500.png?text=vivaldi+summer+presto+placeholder",
@@ -66,7 +66,7 @@
     }
   },
   {
-    "models": "store.dataafterpurchase",
+    "model": "store.dataafterpurchase",
     "pk": 7,
     "fields": {
       "midi_link": "https://via.placeholder.com/500.png?text=Secret+Garden+placeholder",
@@ -74,6 +74,94 @@
       "flac_link": "https://via.placeholder.com/500.png?text=Secret+Garden+placeholder",
       "pdf_link": "https://via.placeholder.com/500.png?text=Secret+Garden+placeholder",
       "composition": 4
+    }
+  },
+  {
+    "model": "store.dataafterpurchase",
+    "pk": 8,
+    "fields": {
+      "midi_link": "https://via.placeholder.com/500.png?text=Schindlers+List+placeholder",
+      "wav_link": "https://via.placeholder.com/500.png?text=Schindlers+List+placeholder",
+      "flac_link": "https://via.placeholder.com/500.png?text=Schindlers+List+placeholder",
+      "pdf_link": "https://via.placeholder.com/500.png?text=Schindlers+List+placeholder",
+      "composition": 5
+    }
+  },
+  {
+    "model": "store.dataafterpurchase",
+    "pk": 9,
+    "fields": {
+      "midi_link": "https://via.placeholder.com/500.png?text=Remembrance+placeholder",
+      "wav_link": "https://via.placeholder.com/500.png?text=Remembrance+placeholder",
+      "flac_link": "https://via.placeholder.com/500.png?text=Remembrance+placeholder",
+      "pdf_link": "https://via.placeholder.com/500.png?text=Remembrance+placeholder",
+      "composition": 6
+    }
+  },
+  {
+    "model": "store.dataafterpurchase",
+    "pk": 10,
+    "fields": {
+      "midi_link": "https://via.placeholder.com/500.png?text=Mozart+Piano+Concerto+21+placeholder",
+      "wav_link": "https://via.placeholder.com/500.png?text=Mozart+Piano+Concerto+21+placeholder",
+      "flac_link": "https://via.placeholder.com/500.png?text=Mozart+Piano+Concerto+21+placeholder",
+      "pdf_link": "https://via.placeholder.com/500.png?text=Mozart+Piano+Concerto+21+placeholder",
+      "composition": 7
+    }
+  },
+  {
+    "model": "store.dataafterpurchase",
+    "pk": 11,
+    "fields": {
+      "midi_link": "https://via.placeholder.com/500.png?text=Meditation+placeholder",
+      "wav_link": "https://via.placeholder.com/500.png?text=Meditation+placeholder",
+      "flac_link": "https://via.placeholder.com/500.png?text=Meditation+placeholder",
+      "pdf_link": "https://via.placeholder.com/500.png?text=Meditation+placeholder",
+      "composition": 8
+    }
+  },
+  {
+    "model": "store.dataafterpurchase",
+    "pk": 12,
+    "fields": {
+      "midi_link": "https://via.placeholder.com/500.png?text=gypsy+air+placeholder",
+      "wav_link": "https://via.placeholder.com/500.png?text=gypsy+air+placeholder",
+      "flac_link": "https://via.placeholder.com/500.png?text=gypsy+air+placeholder",
+      "pdf_link": "https://via.placeholder.com/500.png?text=gypsy+air+placeholder",
+      "composition": 9
+    }
+  },
+  {
+    "model": "store.dataafterpurchase",
+    "pk": 13,
+    "fields": {
+      "midi_link": "https://via.placeholder.com/500.png?text=brahms+violin+sonata+no1+placeholder",
+      "wav_link": "https://via.placeholder.com/500.png?text=brahms+violin+sonata+no1+placeholder",
+      "flac_link": "https://via.placeholder.com/500.png?text=brahms+violin+sonata+no1+placeholder",
+      "pdf_link": "https://via.placeholder.com/500.png?text=brahms+violin+sonata+no1+placeholder",
+      "composition": 10
+    }
+  },
+  {
+    "model": "store.dataafterpurchase",
+    "pk": 14,
+    "fields": {
+      "midi_link": "https://via.placeholder.com/500.png?text=Ladies+in+lavender+main+theme+placeholder",
+      "wav_link": "https://via.placeholder.com/500.png?text=Ladies+in+lavender+main+theme+placeholder",
+      "flac_link": "https://via.placeholder.com/500.png?text=Ladies+in+lavender+main+theme+placeholder",
+      "pdf_link": "https://via.placeholder.com/500.png?text=Ladies+in+lavender+main+theme+placeholder",
+      "composition": 11
+    }
+  },
+  {
+    "model": "store.dataafterpurchase",
+    "pk": 15,
+    "fields": {
+      "midi_link": "https://via.placeholder.com/500.png?text=Broken+placeholder",
+      "wav_link": "https://via.placeholder.com/500.png?text=Broken+placeholder",
+      "flac_link": "https://via.placeholder.com/500.png?text=Broken+placeholder",
+      "pdf_link": "https://via.placeholder.com/500.png?text=Broken+placeholder",
+      "composition": 12
     }
   }
 ]

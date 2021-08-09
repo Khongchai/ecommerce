@@ -1,5 +1,4 @@
 from django.db import models
-from django.db.models.fields import related
 
 # Add fixtures in the order the models are added.
 
@@ -13,43 +12,38 @@ class Composer(models.Model):
 class Composition(models.Model):
     name = models.CharField(max_length=200)
     # A composer can compose many pieces and a piece can be composed by more than 1 composer.
-    composers = models.ManyToManyField( Composer , related_name="compositions")
+    composers = models.ManyToManyField(Composer , related_name="compositions")
 
     def __str__(self):
         return self.name
 
 
 class DataAfterPurchase(models.Model):
-    midi_link = models.URLField(max_length = 200, blank=True, null=True)
-    wav_link = models.URLField(max_length = 200, blank=True, null=True)
-    flac_link = models.URLField(max_length = 200, blank=True, null=True)
-    pdf_link = models.URLField(max_length = 200, blank=True, null=True)
+    midi_link = models.URLField(max_length = 500, blank=True, null=True)
+    wav_link = models.URLField(max_length = 500, blank=True, null=True)
+    flac_link = models.URLField(max_length = 500, blank=True, null=True)
+    pdf_link = models.URLField(max_length = 500, blank=True, null=True)
     # A composition can have many movments. The data for the movements can live on separate locations.
     composition = models.ForeignKey(Composition, on_delete=models.CASCADE, null=True, blank=True, related_name="links")
 
     @property
     def name(self):
         return f"data for {self.composition}"
-    # def name(self):
-    #     try:
-    #         product = self.product
-    #         return product.name
-    #     except:
-    #         product = False 
-    #         return f"data id {self.id} not yet linked to any product"
 
     def __str__(self):
-       return f"{self.name}-data"
+       return f"{self.name}"
 
 class Product(models.Model):
     price_usd = models.DecimalField(max_digits=7, decimal_places=2)
-    image_link = models.URLField(max_length = 200)
-    #when this field is deleted, set the authenticated_data field of Product to null
+    image_link = models.URLField(max_length = 500)
+    # when this field is deleted, set the authenticated_data field of Product to null
     composition = models.OneToOneField(Composition , on_delete=models.SET_NULL, null=True, blank=False, related_name="product")
+    # free = false means free for only students
+    # free = true means free for everyone
     free = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.name
+        return f"Product-{self.composition.name}"
 
 
 
