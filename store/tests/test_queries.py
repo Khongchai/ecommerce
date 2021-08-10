@@ -1,24 +1,18 @@
-import json
-
 import graphene
 from django.test import TestCase
 from ecommerce.graphene_queries.queries import (ComposersQuery,
-                                                CompositionsQuery, 
-                                                DataAfterPurchaseQuery)
-from store.models import Composer, Composition, DataAfterPurchase
+                                                CompositionsQuery,
+                                                DataAfterPurchaseQuery,
+                                                ProductsQuery)
+from store.models import Composer, Composition, DataAfterPurchase, Product
+
 
 """
 example cases: https://github.com/graphql-python/graphene-django/blob/master/graphene_django/tests/test_query.
 """
 
 
-"""
-    Test correct query by testing against one of the provided values.
-    Test relationship (foreignKey, manytomany) by testing one of the shared values against each other.
-
-    Product model is tested in a separate file in which pagination is also tested.
-"""
-class TestComposerQueries(TestCase):
+class TestQueries(TestCase):
 
     maxDiff = None
 
@@ -46,6 +40,20 @@ class TestComposerQueries(TestCase):
             flac_link="purchase_data2_flac_link",
             pdf_link="purchase_data2_pdf_link",
             composition=piece_2
+        )
+
+        #get a lot of these for pagination testing
+        Product.objects.create(
+            price_usd=10,
+            image_link="product_1_image_link",
+            composition=piece_1,
+            free=True
+        )
+        Product.objects.create(
+            price_usd=20,
+            image_link="product_2_image_link",
+            composition=piece_2,
+            free=False
         )
 
 
@@ -243,7 +251,98 @@ class TestComposerQueries(TestCase):
         self.assertEqual(compositions_result.data, compositions_expected)
         
         
+class TestPaginatedQueries(TestCase):
 
+    maxDiff = None
 
+    def setUp(self):
+        for i in range(20):
+           Product.objects.create(
+                price_usd=10,
+                image_link=f"{i}_image_link",
+                free=True
+            )
+            
 
+    def test_product_paginated_query(self):
 
+        class Query(ProductsQuery, graphene.ObjectType):
+            pass
+        
+        schema = graphene.Schema(query=Query)
+
+        get_first_three = """
+            query{
+                allProductsInfo(search: "", page: 1, limit: 3)
+                {
+                    products{
+                        priceUsd
+                    }
+                    isFirst
+                    isLast
+                    pagePosition
+                    {
+                        page
+                        of
+                    }
+                }
+            } 
+        """
+        get_second_five = """
+            query{
+                allProductsInfo(search: "", page: 2, limit: 5)
+                {
+                    products{
+                        priceUsd
+                    }
+                    isFirst
+                    isLast
+                    pagePosition
+                    {
+                        page
+                        of
+                    }
+                }
+            } 
+        """
+        get_all = """
+            query
+            {
+                allProductsInfo(search: "", page: 1, limit: -1)
+                {
+                    isLast
+                    isFirst
+                    pagePosition {
+                        page
+                        of
+                    }
+                }
+            }
+
+        """
+        all_expected = {
+                "allProductsInfo": {
+                    "isFirst": True,
+                    "isLast": True,
+                    "pagePosition": {
+                        "of": 1,
+                        "page": 1
+                    }
+                }
+            } 
+        all_result = schema.execute(get_all)
+        self.assertEqual(all_result.data, all_expected)
+        first_three_result = schema.execute(get_first_three)
+        self.assertEqual(len(first_three_result.data["allProductsInfo"]["products"]), 3)
+        self.assertEqual(first_three_result.data["allProductsInfo"]["pagePosition"], {"of": 7, "page": 1})
+        self.assertEqual(first_three_result.data["allProductsInfo"]["isFirst"], True)
+        self.assertEqual(first_three_result.data["allProductsInfo"]["isLast"], False)
+        second_five_result = schema.execute(get_second_five)
+        self.assertEqual(len(second_five_result.data["allProductsInfo"]["products"]), 5)
+        self.assertEqual(second_five_result.data["allProductsInfo"]["pagePosition"], {"of": 4, "page": 2})
+        self.assertEqual(second_five_result.data["allProductsInfo"]["isFirst"], False)
+        self.assertEqual(second_five_result.data["allProductsInfo"]["isLast"], False)
+        
+        
+    def test_product_searched_paignated_query(self):
+        pass

@@ -4,6 +4,7 @@ from ..graphene_types.model_based_types import ComposerType, CompositionType, Da
 from ..graphene_types.custom_types import AllProductsDataType
 from django.contrib.postgres.search import  SearchVector
 from django.core.paginator import Paginator
+from math import ceil
 
 
 class ComposersQuery(graphene.ObjectType):
@@ -32,7 +33,7 @@ class ProductsQuery(graphene.ObjectType):
                         limit=graphene.Int(required=False), page=graphene.Int(required=False))
 
     def resolve_all_products_info(root, _, search, limit, page):
-        limit = limit if limit else 9
+        limit = limit if limit and limit >= 0 else 9 if limit >= 0 else 9999
         page = max(page, 1) if page else 1
 
         all_products = Product.objects.select_related("composition").all().order_by("composition__name")
@@ -49,7 +50,7 @@ class ProductsQuery(graphene.ObjectType):
             "is_last": not paginated_products.has_next(),
             "page_position": {
                 "page": page,
-                "of": paginator.count
+                "of": ceil(paginator.count / limit)
             }
         }
         return return_info
