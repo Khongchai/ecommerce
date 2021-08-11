@@ -24,7 +24,7 @@ class DataAfterPurchase(models.Model):
     flac_link = models.URLField(max_length = 500, blank=True, null=True)
     pdf_link = models.URLField(max_length = 500, blank=True, null=True)
     # A composition can have many movments. The data for the movements can live on separate locations.
-    composition = models.ForeignKey(Composition, on_delete=models.CASCADE, null=True, blank=True, related_name="links")
+    composition = models.ForeignKey(Composition, on_delete=models.CASCADE,  null=False, blank=False, related_name="links")
 
     @property
     def name(self):

@@ -2,9 +2,9 @@ import graphene
 from store.models import Composer, Composition, Product, DataAfterPurchase
 from ..graphene_types.model_based_types import ComposerType, CompositionType, DataAfterPurchaseType
 from ..graphene_types.custom_types import AllProductsDataType
-from django.contrib.postgres.search import  SearchVector
 from django.core.paginator import Paginator
 from math import ceil
+from django.db.models import Q
 
 
 class ComposersQuery(graphene.ObjectType):
@@ -37,15 +37,14 @@ class ProductsQuery(graphene.ObjectType):
         page = max(page, 1) if page else 1
 
         all_products = Product.objects.select_related("composition").all().order_by("composition__name")
-        filtered_products = all_products.annotate(
-                            search=SearchVector("composition__name", "composition__composers__name", config="unaccent")
-                            ).filter(search__icontains=search) if search else all_products
+        filtered_products = all_products.filter(
+                                Q(composition__name__unaccent__icontains=search) |
+                                Q(composition__composers__name__unaccent__icontains=search)
+                            )
         paginator = Paginator(filtered_products, limit)
         paginated_products = paginator.page(page)
         return_info = {
             "products": paginated_products.object_list,
-            # Do not check against page number as page nums 
-            # are dynamic and can change (eg. starting at page 0).
             "is_first": not paginated_products.has_previous(),
             "is_last": not paginated_products.has_next(),
             "page_position": {
