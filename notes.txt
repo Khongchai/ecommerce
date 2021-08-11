@@ -1,6 +1,4 @@
 https://cloudinary.com/documentation/control_access_to_media << after user purchased
 
 
-refactor schema
-Write tests
 Set up CI CD with test
