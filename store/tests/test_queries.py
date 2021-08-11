@@ -1,3 +1,5 @@
+import json
+
 import graphene
 from django.test import TestCase
 from ecommerce.graphene_queries.queries import (ComposersQuery,
@@ -5,7 +7,6 @@ from ecommerce.graphene_queries.queries import (ComposersQuery,
                                                 DataAfterPurchaseQuery,
                                                 ProductsQuery)
 from store.models import Composer, Composition, DataAfterPurchase, Product
-
 
 """
 example cases: https://github.com/graphql-python/graphene-django/blob/master/graphene_django/tests/test_query.
@@ -42,7 +43,7 @@ class TestQueries(TestCase):
             composition=piece_2
         )
 
-        #get a lot of these for pagination testing
+        # get a lot of these for pagination testing
         Product.objects.create(
             price_usd=10,
             image_link="product_1_image_link",
@@ -110,6 +111,25 @@ class TestQueries(TestCase):
         self.assertIsNone(result.errors)
         self.assertEqual(result.data["allDataAfterPurchase"][0]["midiLink"],"purchase_data1_midi_link")
         self.assertEqual(result.data["allDataAfterPurchase"][1]["midiLink"], "purchase_data2_midi_link")
+
+    def test_product_data_query(self):
+
+        class Query(ProductsQuery, graphene.ObjectType):
+            pass
+        
+        schema = graphene.Schema(query=Query)
+        query = """
+            query{
+                allProductsInfo(search: "", page: 1, limit: -1){
+                    products
+                    {
+                        id
+                    }
+                }
+            } 
+        """
+        result = schema.execute(query)
+        self.assertEqual(len(result.data["allProductsInfo"]["products"]), 2)
 
 
     def test_many_to_many_composer_compositions_relationship(self):
@@ -255,21 +275,20 @@ class TestPaginatedQueries(TestCase):
 
     maxDiff = None
 
-    def setUp(self):
-        for i in range(20):
-           Product.objects.create(
-                price_usd=10,
-                image_link=f"{i}_image_link",
-                free=True
-            )
-            
-
     def test_product_paginated_query(self):
 
         class Query(ProductsQuery, graphene.ObjectType):
             pass
         
         schema = graphene.Schema(query=Query)
+
+        # For pagination test
+        for i in range(20):
+            Product.objects.create(
+                price_usd=10,
+                image_link=f"{i}_image_link",
+                free=True
+            )
 
         get_first_three = """
             query{
@@ -288,6 +307,7 @@ class TestPaginatedQueries(TestCase):
                 }
             } 
         """
+
         get_second_five = """
             query{
                 allProductsInfo(search: "", page: 2, limit: 5)
@@ -305,6 +325,7 @@ class TestPaginatedQueries(TestCase):
                 }
             } 
         """
+
         get_all = """
             query
             {
@@ -320,6 +341,7 @@ class TestPaginatedQueries(TestCase):
             }
 
         """
+
         all_expected = {
                 "allProductsInfo": {
                     "isFirst": True,
@@ -330,6 +352,7 @@ class TestPaginatedQueries(TestCase):
                     }
                 }
             } 
+        
         all_result = schema.execute(get_all)
         self.assertEqual(all_result.data, all_expected)
         first_three_result = schema.execute(get_first_three)
@@ -342,7 +365,77 @@ class TestPaginatedQueries(TestCase):
         self.assertEqual(second_five_result.data["allProductsInfo"]["pagePosition"], {"of": 4, "page": 2})
         self.assertEqual(second_five_result.data["allProductsInfo"]["isFirst"], False)
         self.assertEqual(second_five_result.data["allProductsInfo"]["isLast"], False)
+
+    def test_product_searched_paginated_query(self):
+
+        claude = Composer.objects.create(name="Achille-Claude Debussy")
+        claude2 = Composer.objects.create(name="Achille-Claude Debussy2")
+        pyotr = Composer.objects.create(name="Pyotr Ilyich Tchaikovsky")
+        jules = Composer.objects.create(name="Jules Émile Frédéric Massenet")
+        traditional = Composer.objects.create(name="Traditional")
+
+        moon = Composition.objects.create(name="A Song to the Moon")
+        lake = Composition.objects.create(name="Swan Lake")
+        meditation = Composition.objects.create(name="Meditation")
+        arm = Composition.objects.create(name="Pierre's Right Arm")
+        moon.composers.add(claude)
+        moon.composers.add(claude2)
+        lake.composers.add(pyotr)
+        meditation.composers.add(jules)
+        arm.composers.add(traditional)
+
+        Product.objects.create(
+            price_usd=10,
+            image_link=f"{moon}-link",
+            composition=moon,
+            free=False,
+        )
+        Product.objects.create(
+            price_usd=10,
+            image_link=f"{lake}-link",
+            composition=lake,
+            free=False,
+        )
+        Product.objects.create(
+            price_usd=10,
+            image_link=f"{meditation}-link",
+            composition=meditation,
+            free=False,
+        )
+        Product.objects.create(
+            price_usd=10,
+            image_link=f"{arm}-link",
+            composition=arm,
+            free=False,
+        )
+
+        class Query(ProductsQuery, graphene.ObjectType):
+            pass
         
+        schema = graphene.Schema(query=Query)
         
-    def test_product_searched_paignated_query(self):
-        pass
+        debussy_and_massenet = """
+             query{
+                allProductsInfo(search: "ss", limit: -1, page: 1)
+                {
+                    products{
+                    composition{
+                        composers{
+                        name
+                        }
+                    }
+                    }
+                }
+                }
+        """
+
+        debussy_and_massenet_result = schema.execute(debussy_and_massenet)
+        self.assertEqual(debussy_and_massenet_result.data["allProductsInfo"]["products"][0]
+                        ["composition"]["composers"][0]["name"], "Achille-Claude Debussy")
+        self.assertEqual(debussy_and_massenet_result.data["allProductsInfo"]["products"][0]
+                        ["composition"]["composers"][1]["name"], "Achille-Claude Debussy2")
+        self.assertEqual(debussy_and_massenet_result.data["allProductsInfo"]["products"][1]
+                        ["composition"]["composers"][0]["name"], "Jules Émile Frédéric Massenet")
+        
+
+

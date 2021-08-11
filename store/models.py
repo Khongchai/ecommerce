@@ -24,27 +24,27 @@ class DataAfterPurchase(models.Model):
     flac_link = models.URLField(max_length = 500, blank=True, null=True)
     pdf_link = models.URLField(max_length = 500, blank=True, null=True)
     # A composition can have many movments. The data for the movements can live on separate locations.
-    composition = models.ForeignKey(Composition, on_delete=models.CASCADE,  null=False, blank=False, related_name="links")
+    composition = models.ForeignKey(Composition, on_delete=models.CASCADE,  null=True, blank=True, related_name="links")
 
     @property
     def name(self):
-        return f"data for {self.composition}"
+        return f"data for {self.composition.name}"
 
     def __str__(self):
-       return f"{self.name}"
+       return f"{self.composition.name}"
 
 class Product(models.Model):
     price_usd = models.DecimalField(max_digits=7, decimal_places=2)
     image_link = models.URLField(max_length = 500)
     # when this field is deleted, set the authenticated_data field of Product to null
-    composition = models.OneToOneField(Composition , on_delete=models.SET_NULL, null=True, blank=False, related_name="product")
+    composition = models.OneToOneField(Composition , on_delete=models.SET_NULL, null=True, blank=True, related_name="product")
     # free = false means free for only students
     # free = true means free for everyone
     free = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"Product-{self.composition.name}"
-
+        call_this = self.composition.name if self.composition else "Not yet assigned to a composition"
+        return call_this
 
 
  

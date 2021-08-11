@@ -40,7 +40,7 @@ class ProductsQuery(graphene.ObjectType):
         filtered_products = all_products.filter(
                                 Q(composition__name__unaccent__icontains=search) |
                                 Q(composition__composers__name__unaccent__icontains=search)
-                            )
+                            ).distinct() if search else all_products
         paginator = Paginator(filtered_products, limit)
         paginated_products = paginator.page(page)
         return_info = {
