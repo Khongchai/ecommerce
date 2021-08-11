@@ -437,5 +437,6 @@ class TestPaginatedQueries(TestCase):
         self.assertEqual(debussy_and_massenet_result.data["allProductsInfo"]["products"][1]
                         ["composition"]["composers"][0]["name"], "Jules Émile Frédéric Massenet")
         
+        
 
 
