@@ -2,7 +2,7 @@ import json
 
 import graphene
 from django.test import TestCase
-from ecommerce.graphene_queries.queries import (ComposersQuery,
+from ecommerce.graphene_queries.store_queries import (ComposersQuery,
                                                 CompositionsQuery,
                                                 DataAfterPurchaseQuery,
                                                 ProductsQuery)
@@ -59,6 +59,9 @@ class TestQueries(TestCase):
 
 
     def test_composer_query(self):
+        """
+            Simple fetching of Composer objects 
+        """
 
         class Query(ComposersQuery, graphene.ObjectType):
             pass
@@ -78,6 +81,10 @@ class TestQueries(TestCase):
 
 
     def test_composition_query(self):
+        """
+            Simple fetching of Composition objects
+        """
+
         class Query(CompositionsQuery, graphene.ObjectType):
             pass
 
@@ -96,6 +103,10 @@ class TestQueries(TestCase):
 
 
     def test_purchase_data_query(self):
+        """
+            Simple fetching of DataAfterPurchase object
+        """
+
         class Query(DataAfterPurchaseQuery, graphene.ObjectType):
             pass
 
@@ -112,7 +123,10 @@ class TestQueries(TestCase):
         self.assertEqual(result.data["allDataAfterPurchase"][0]["midiLink"],"purchase_data1_midi_link")
         self.assertEqual(result.data["allDataAfterPurchase"][1]["midiLink"], "purchase_data2_midi_link")
 
-    def test_product_data_query(self):
+    def test_product_data_relationship_query(self):
+        """
+            Testing relationship between prodcut and data
+        """
 
         class Query(ProductsQuery, graphene.ObjectType):
             pass

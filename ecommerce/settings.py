@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "store",
     "graphql_auth",
     "users",
+    "Cart",
 ]
 
 
@@ -169,6 +170,7 @@ GRAPHENE = {
     'MIDDLEWARE': [
         'graphql_jwt.middleware.JSONWebTokenMiddleware',
     ],
+    "ATOMIC_MUTATIONS": True
 }
 
 GRAPHQL_AUTH = {
