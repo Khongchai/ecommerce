@@ -3,7 +3,6 @@ import uuid
 from django.db import models
 from django.db.models.fields import related
 from django.db.models.fields.related import ForeignKey
-from store.models import Product
 from users.models import CustomUser
 
 

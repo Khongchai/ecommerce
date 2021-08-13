@@ -94,3 +94,10 @@ class TestCartMutations(TestCase):
                 }
             } 
         """
+        # schema.execute(query)
+        # print(query)
+        # query_expected = {
+        #     "allCartsInfo": {
+        #         "complete": True
+        #     }
+        # }

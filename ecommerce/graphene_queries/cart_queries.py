@@ -6,5 +6,5 @@ class CartsQuery(graphene.ObjectType):
     all_carts_info = graphene.List(CartType)
 
     def resolve_all_carts_info(root, _):
-        all_carts = Cart.objects.select_related("customer", "items_in_cart").all()
+        all_carts = Cart.objects.prefetch_related("items_in_cart").all()
         return all_carts

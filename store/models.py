@@ -1,3 +1,4 @@
+from Cart.models import Cart
 from django.db import models
 
 # Add fixtures in the order the models are added.
@@ -33,7 +34,6 @@ class DataAfterPurchase(models.Model):
     def __str__(self):
        return f"{self.composition.name}"
 
-from Cart.models import Cart
 
 class Product(models.Model):
     price_usd = models.DecimalField(max_digits=7, decimal_places=2)
@@ -43,7 +43,6 @@ class Product(models.Model):
     # free = false means free for only students
     # free = true means free for everyone
     free = models.BooleanField(default=False)
-
     cart = models.ForeignKey(Cart, on_delete=models.SET_NULL, null=True, blank=True, related_name="items_in_cart")
 
     def __str__(self):
