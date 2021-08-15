@@ -1,4 +1,7 @@
 https://cloudinary.com/documentation/control_access_to_media << after user purchased
 
 
-solve circular import and continue with testing
+allCartsInfo returns empty array...why?
+And how did it pass the test: https://stackoverflow.com/questions/6423814/is-there-a-way-to-check-if-two-object-contain-the-same-values-in-each-of-their-v
+
+Read full text search

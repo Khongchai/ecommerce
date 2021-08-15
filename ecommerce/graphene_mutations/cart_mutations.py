@@ -10,7 +10,7 @@ class CartCompletionMutation(graphene.Mutation):
         cart_id = graphene.ID()
         completion = graphene.Boolean()
 
-    modified_cart = graphene.Field(CartType)
+    modify_cart = graphene.Field(CartType, cart_id=graphene.Int(), completion=graphene.Boolean())
 
     @classmethod
     def mutate(cls, unused_root, unused_info, cart_id, completion):
@@ -23,6 +23,7 @@ class CartCompletionMutation(graphene.Mutation):
         cart.complete = completion
         cart.transaction_id = uuid.uuid4() if completion else None
         cart.save()
+
         return CartCompletionMutation(cart=cart)
 
 class CartMutation(graphene.ObjectType):
