@@ -1,6 +1,9 @@
+import graphene
+from Cart.models import Cart
 from graphene_django import DjangoObjectType
 from store.models import Composer, Composition, DataAfterPurchase, Product
-from Cart.models import Cart
+
+
 class ProductType(DjangoObjectType):
     class Meta: 
         model = Product
@@ -24,4 +27,4 @@ class DataAfterPurchaseType(DjangoObjectType):
 class CartType(DjangoObjectType):
     class Meta:
         model = Cart
-        fields = "__all__"
+        fields = "__all__" 

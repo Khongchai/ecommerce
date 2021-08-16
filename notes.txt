@@ -1,7 +1,10 @@
 https://cloudinary.com/documentation/control_access_to_media << after user purchased
 
 
-allCartsInfo returns empty array...why?
-And how did it pass the test: https://stackoverflow.com/questions/6423814/is-there-a-way-to-check-if-two-object-contain-the-same-values-in-each-of-their-v
+1. Create an empty cart for a customer or if there exist a cart without a customer, use that.
+2. test it 
+3. set up front end, then get thecart
+
+mock test_get_or_create_cart https://stackoverflow.com/questions/64213431/how-to-mock-info-context-in-django-graphene-tests
 
 Read full text search

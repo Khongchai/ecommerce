@@ -28,5 +28,32 @@ class CartCompletionMutation(graphene.Mutation):
 
         return CartCompletionMutation(cart=cart)
 
+class CreateOrGetEmptyCartMutation(graphene.Mutation):
+    class Arguments:
+        pass
+
+    cart = graphene.Field(CartType)
+
+    @classmethod
+    def mutate(cls, unused_root, info):
+        """
+            On page loads, if user doesn't already have a cart
+            return the first empty cart with user set to current user 
+
+            TODO => when user not logged in
+        """
+        del unused_root
+        print("info is", info.context)
+        logged_in = info.context.user
+        if not logged_in:
+            #TODO handle cart for user not logged in.
+            return
+
+        # Does not get a completed cart from the same user
+        cart: Cart = Cart.objects.get_or_create(customer=logged_in, complete=False, transaction_id=None)
+        return CreateOrGetEmptyCartMutation(cart=cart[0])
+
+
 class CartMutation(graphene.ObjectType):
     update_cart_completion = CartCompletionMutation.Field()
+    get_or_create_and_get_cart = CreateOrGetEmptyCartMutation.Field()

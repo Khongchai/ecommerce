@@ -3,22 +3,16 @@ import uuid
 from django.db import models
 from django.db.models.fields import related
 from django.db.models.fields.related import ForeignKey
-from users.models import CustomUser
+from django.conf import settings
 
 
 # A cart is assigned automatically to both a logged-in and not-logged-in users
 # Focus on logged-in users first
 class Cart(models.Model):
-    customer = models.OneToOneField(CustomUser, on_delete=models.SET_NULL, null=True, blank=True, related_name="Cart")
-
+    customer = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="cart")
     transaction_id = models.CharField(max_length=100, null=True, blank=True)
     date_ordered = models.DateTimeField(auto_now_add=True)
     complete = models.BooleanField(default=False)
-
-    # @property
-    # def get_cart_total(self):
-    #     items_in_cart = self.items_in_cart.objects.all()
-        # print(items_in_cart.total())
 
     def __str__(self):
         """

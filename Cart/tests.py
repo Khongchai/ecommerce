@@ -1,13 +1,17 @@
 import json
 import uuid
+from django.test.client import Client
 
 import graphene
+from ecommerce.graphene_mutations.user_mutations import AuthMutation
 from django.test import TestCase, testcases
 from ecommerce.graphene_mutations.cart_mutations import CartMutation
 from ecommerce.graphene_queries.cart_queries import CartsQuery
 from ecommerce.graphene_queries.store_queries import ProductsQuery
+from graphql_auth.schema import MeQuery
 from store.models import Composition, Product
 from users.models import CustomUser
+from graphql_jwt.testcases import JSONWebTokenTestCase
 
 from .models import Cart
 
@@ -35,6 +39,7 @@ class TestCartQueries(TestCase):
             complete=False,
         )
         cart.items_in_cart.add(product_1)
+
 
     def test_cart_customer_product_relationships(self):
 
@@ -69,7 +74,7 @@ class TestCartQueries(TestCase):
         self.assertEqual(query_result.data, expected)
 
 
-class TestCartCompletionQueriesAndMutations(TestCase):
+class TestCartCompletionQueriesAndMutations(JSONWebTokenTestCase):
     
     maxDiff=None
 
@@ -133,7 +138,6 @@ class TestCartCompletionQueriesAndMutations(TestCase):
             query{
                 allCartsInfo{
                     complete
-                    id
                 }
             } 
         """
@@ -141,10 +145,8 @@ class TestCartCompletionQueriesAndMutations(TestCase):
         query_expected = {
             "allCartsInfo": [{
                 "complete": False,
-                "id": "1"
             }, {
                 "complete": True,
-                "id": "2"
             }]
         }
         self.assertEqual(query_result.data, query_expected)
@@ -203,4 +205,41 @@ class TestCartCompletionQueriesAndMutations(TestCase):
         self.assertFalse(result.data["updateCartCompletion"]["cart"]["complete"])
         self.assertFalse(result.data["updateCartCompletion"]["cart"]["transactionId"])
         
+
+    def test_get_or_create_cart(self):
+        """
+            Checks that if user doesn't already have a cart, create and get one. 
+        """
+        c = Client(context_value=self.context_value)
+        new_user = CustomUser.objects.create(
+            email = "new_user@email.com",
+            username="new_user",
+            password="superstrongpassword",
+        )
+        c.login(username="new_user", password="superstrongpassword")
+
+        class Mutation(CartMutation, AuthMutation, graphene.ObjectType):
+            pass
+
+        schema = graphene.Schema(mutation=Mutation)
+
+        mutation = """
+            mutation{
+                getOrCreateAndGetCart
+                {
+                    cart{
+                        id
+                        complete
+                    }
+                }
+            } 
+        """
+        result = schema.execute(mutation)
+        self.assertEqual(result.data["getOrCreateAndGetCart"]["cart"]["id"], str(new_user.cart.id))
+        self.assertFalse(result.data["getOrCreateAndGetCart"]["cart"]["complete"])
+
+        
+    def test_add_items_to_cart(self):
+        #TODO
+        pass 
 
