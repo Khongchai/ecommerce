@@ -3,7 +3,7 @@ import uuid
 
 import graphene
 from django.test import TestCase, testcases
-from ecommerce.graphene_mutations.cart_mutations import CartCompletionMutation
+from ecommerce.graphene_mutations.cart_mutations import CartMutation
 from ecommerce.graphene_queries.cart_queries import CartsQuery
 from ecommerce.graphene_queries.store_queries import ProductsQuery
 from store.models import Composition, Product
@@ -112,6 +112,7 @@ class TestCartCompletionQueriesAndMutations(TestCase):
         cart_2:Cart = Cart.objects.create(
             customer=user_2,
             complete=True,
+            transaction_id=uuid.uuid4()
         )
         cart_1.items_in_cart.add(product_1)
         cart_2.items_in_cart.add(product_2)
@@ -132,45 +133,74 @@ class TestCartCompletionQueriesAndMutations(TestCase):
             query{
                 allCartsInfo{
                     complete
+                    id
                 }
             } 
         """
         query_result = schema.execute(query)
         query_expected = {
             "allCartsInfo": [{
-                "complete": False  
+                "complete": False,
+                "id": "1"
             }, {
-                "complete": True
+                "complete": True,
+                "id": "2"
             }]
         }
         self.assertEqual(query_result.data, query_expected)
 
-    def test_cart_uuid(self):
+    def test_cart_uuid_auto_gen(self):
         """
             This test case checks if uuid is attached automatically to the 
-            cart with complete = true and None for cart = false. 
+            cart with complete = true
 
             This test uses the complete=false cart, set its completion to true through
             graphene resolver, then verify that the transaction_id(uuid) is automatically added.
         """
 
-        class Query(CartsQuery, graphene.ObjectType):
-            pass
-
-        class Mutation(CartCompletionMutation, graphene.ObjectType):
+        class Mutation(CartMutation, graphene.ObjectType):
             pass
         
-        # completion=False cart's id = 3
-        schema = graphene.Schema(mutation=Mutation, query=Query)
+        schema = graphene.Schema(mutation=Mutation)
         mutation = """
             mutation{
-                modifyCart(cartId: 3, completion: true){
-                    id
+                updateCartCompletion(username: "tester", completion: true){
+                    cart{
+                        complete
+                        transactionId 
+                    }
                 }
             } 
         """
-        modified_cart_result = schema.execute(mutation)
-        print(json.dumps(modified_cart_result.data, skipkeys=True, indent=4))
+        result = schema.execute(mutation)
+        self.assertTrue(result.data["updateCartCompletion"]["cart"]["complete"])
+        self.assertTrue(result.data["updateCartCompletion"]["cart"]["transactionId"])
+
+    def test_cart_uuid_auto_remove(self):
+        """
+            This test case checks if uuid is removed automatically from 
+            cart with complete = false
+
+            This test uses the complete=true cart, set its completion to false through graphene resolver,
+            then verify that the transaction_id(uuid) is automatically removed. 
+        """
+
+        class Mutation(CartMutation, graphene.ObjectType):
+            pass
         
+        schema = graphene.Schema(mutation=Mutation)
+        mutation = """
+             mutation{
+                updateCartCompletion(username: "tester2", completion: false){
+                    cart{
+                        complete
+                        transactionId 
+                    }
+                }
+            } 
+        """
+        result = schema.execute(mutation)
+        self.assertFalse(result.data["updateCartCompletion"]["cart"]["complete"])
+        self.assertFalse(result.data["updateCartCompletion"]["cart"]["transactionId"])
         
 

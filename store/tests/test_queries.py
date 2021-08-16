@@ -9,9 +9,8 @@ from ecommerce.graphene_queries.store_queries import (ComposersQuery,
 from store.models import Composer, Composition, DataAfterPurchase, Product
 
 """
-example cases: https://github.com/graphql-python/graphene-django/blob/master/graphene_django/tests/test_query.
+example cases: https://github.com/graphql-python/graphene-django/blob/master/graphene_django/tests/test_query.py
 """
-
 
 class TestQueries(TestCase):
 

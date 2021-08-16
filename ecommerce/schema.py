@@ -5,7 +5,7 @@ from .graphene_types.model_based_types import  DataAfterPurchaseType
 from .graphene_queries.store_queries import ComposersQuery, DataAfterPurchaseQuery, ProductsQuery, CompositionsQuery
 from .graphene_queries.cart_queries import CartsQuery
 from .graphene_mutations.user_mutations import AuthMutation
-from .graphene_mutations.cart_mutations import CartCompletionMutation
+from .graphene_mutations.cart_mutations import CartMutation
 
 
 class Query(UserQuery, MeQuery, ComposersQuery, ProductsQuery, 
@@ -19,7 +19,7 @@ class Query(UserQuery, MeQuery, ComposersQuery, ProductsQuery,
     def all_data_after_purchase_only(root, _):
         return DataAfterPurchase.objects.all()
 
-class Mutation(AuthMutation, CartCompletionMutation, graphene.ObjectType):
+class Mutation(AuthMutation, CartMutation, graphene.ObjectType):
     pass
 
 

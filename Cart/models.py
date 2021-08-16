@@ -11,7 +11,7 @@ from users.models import CustomUser
 class Cart(models.Model):
     customer = models.OneToOneField(CustomUser, on_delete=models.SET_NULL, null=True, blank=True, related_name="Cart")
 
-    transaction_id = models.CharField(max_length=100, null=True)
+    transaction_id = models.CharField(max_length=100, null=True, blank=True)
     date_ordered = models.DateTimeField(auto_now_add=True)
     complete = models.BooleanField(default=False)
 
@@ -21,7 +21,11 @@ class Cart(models.Model):
         # print(items_in_cart.total())
 
     def __str__(self):
-        return f"Cart no.{self.id}"
+        """
+            If cart is complete, display: {user}-complete-{transaction-id} 
+            else, display: {user}-current
+        """
+        return f"{self.customer.username}-complete-{self.transaction_id}" if self.complete else f"{self.customer.username}-current"
 
 
 # Reference
