@@ -43,11 +43,16 @@ class CreateOrGetEmptyCartMutation(graphene.Mutation):
             TODO => when user not logged in
         """
         del unused_root
-        print("info is", info.context)
-        logged_in = info.context.user
-        if not logged_in:
+
+        # top for testing, bottom for actual request
+        try:
+            logged_in = info.context["user"]
+        except:
+            logged_in = info.context.user
+
+        if logged_in.is_anonymous:
             #TODO handle cart for user not logged in.
-            return
+            raise ValueError("Handling anonymous user is not yet implemented")
 
         # Does not get a completed cart from the same user
         cart: Cart = Cart.objects.get_or_create(customer=logged_in, complete=False, transaction_id=None)

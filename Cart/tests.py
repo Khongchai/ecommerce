@@ -1,17 +1,18 @@
 import json
 import uuid
-from django.test.client import Client
 
 import graphene
-from ecommerce.graphene_mutations.user_mutations import AuthMutation
-from django.test import TestCase, testcases
+from django.test import TestCase
+from graphene.test import Client
 from ecommerce.graphene_mutations.cart_mutations import CartMutation
+from ecommerce.graphene_mutations.user_mutations import AuthMutation
 from ecommerce.graphene_queries.cart_queries import CartsQuery
-from ecommerce.graphene_queries.store_queries import ProductsQuery
+from graphene_django.utils.testing import GraphQLTestCase
 from graphql_auth.schema import MeQuery
+from graphql_jwt.shortcuts import get_token
+from graphql_jwt.testcases import JSONWebTokenTestCase
 from store.models import Composition, Product
 from users.models import CustomUser
-from graphql_jwt.testcases import JSONWebTokenTestCase
 
 from .models import Cart
 
@@ -74,7 +75,7 @@ class TestCartQueries(TestCase):
         self.assertEqual(query_result.data, expected)
 
 
-class TestCartCompletionQueriesAndMutations(JSONWebTokenTestCase):
+class TestCartCompletionQueriesAndMutations(GraphQLTestCase):
     
     maxDiff=None
 
@@ -210,13 +211,11 @@ class TestCartCompletionQueriesAndMutations(JSONWebTokenTestCase):
         """
             Checks that if user doesn't already have a cart, create and get one. 
         """
-        c = Client(context_value=self.context_value)
         new_user = CustomUser.objects.create(
             email = "new_user@email.com",
             username="new_user",
             password="superstrongpassword",
         )
-        c.login(username="new_user", password="superstrongpassword")
 
         class Mutation(CartMutation, AuthMutation, graphene.ObjectType):
             pass
@@ -234,9 +233,11 @@ class TestCartCompletionQueriesAndMutations(JSONWebTokenTestCase):
                 }
             } 
         """
-        result = schema.execute(mutation)
-        self.assertEqual(result.data["getOrCreateAndGetCart"]["cart"]["id"], str(new_user.cart.id))
-        self.assertFalse(result.data["getOrCreateAndGetCart"]["cart"]["complete"])
+        client = Client(schema)
+        executed = client.execute(mutation, context={"user": new_user})
+
+        self.assertEqual(executed["data"]["getOrCreateAndGetCart"]["cart"]["id"], str(new_user.cart.id))
+        self.assertFalse(executed["data"]["getOrCreateAndGetCart"]["cart"]["complete"])
 
         
     def test_add_items_to_cart(self):
