@@ -11,7 +11,7 @@ from django.conf import settings
 class Cart(models.Model):
     customer = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="cart")
     transaction_id = models.CharField(max_length=100, null=True, blank=True)
-    date_ordered = models.DateTimeField(auto_now_add=True)
+    date_created = models.DateTimeField(auto_now_add=True)
     complete = models.BooleanField(default=False)
 
     def __str__(self):

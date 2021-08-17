@@ -8,9 +8,6 @@ from ecommerce.graphene_mutations.cart_mutations import CartMutation
 from ecommerce.graphene_mutations.user_mutations import AuthMutation
 from ecommerce.graphene_queries.cart_queries import CartsQuery
 from graphene_django.utils.testing import GraphQLTestCase
-from graphql_auth.schema import MeQuery
-from graphql_jwt.shortcuts import get_token
-from graphql_jwt.testcases import JSONWebTokenTestCase
 from store.models import Composition, Product
 from users.models import CustomUser
 

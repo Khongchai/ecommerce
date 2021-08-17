@@ -32,7 +32,7 @@ class CreateOrGetEmptyCartMutation(graphene.Mutation):
     class Arguments:
         pass
 
-    cart = graphene.Field(CartType)
+    cart = graphene.Field(CartType, required=True)
 
     @classmethod
     def mutate(cls, unused_root, info):
