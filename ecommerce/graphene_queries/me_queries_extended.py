@@ -1,3 +1,5 @@
+from Cart.models import Cart
+from ecommerce.graphene_types.custom_types import MeExtendedType
 import graphene 
 from graphql_auth.schema import UserNode
 
@@ -11,10 +13,12 @@ class MeQueryExtended(graphene.ObjectType):
     """
         MeQuery, but with arbitrary related fields attached. 
     """
-    me_extended = graphene.Field(UserNode)
+    me_extended = graphene.Field(MeExtendedType)
 
     def resolve_me_extended(self, info):
-        user = info.context.user
-        if user.is_authenticated:
-            return user
-        return None
+        authenticated_user = info.context.user
+        cart: Cart = Cart.objects.get_or_create(customer=authenticated_user, complete=False, transaction_id=None)
+
+        if authenticated_user.is_authenticated:
+            return {"user": authenticated_user, "cart": cart[0]}
+        raise ValueError("User is not logged in")

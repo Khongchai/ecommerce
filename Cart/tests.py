@@ -4,7 +4,7 @@ import uuid
 import graphene
 from django.test import TestCase
 from graphene.test import Client
-from ecommerce.graphene_mutations.cart_mutations import CartMutation
+from ecommerce.graphene_mutations.cart_mutations import CartMutations
 from ecommerce.graphene_mutations.user_mutations import AuthMutation
 from ecommerce.graphene_queries.cart_queries import CartsQuery
 from graphene_django.utils.testing import GraphQLTestCase
@@ -158,7 +158,7 @@ class TestCartCompletionQueriesAndMutations(GraphQLTestCase):
             graphene resolver, then verify that the transaction_id(uuid) is automatically added.
         """
 
-        class Mutation(CartMutation, graphene.ObjectType):
+        class Mutation(CartMutations, graphene.ObjectType):
             pass
         
         schema = graphene.Schema(mutation=Mutation)
@@ -185,7 +185,7 @@ class TestCartCompletionQueriesAndMutations(GraphQLTestCase):
             then verify that the transaction_id(uuid) is automatically removed. 
         """
 
-        class Mutation(CartMutation, graphene.ObjectType):
+        class Mutation(CartMutations, graphene.ObjectType):
             pass
         
         schema = graphene.Schema(mutation=Mutation)
@@ -214,7 +214,7 @@ class TestCartCompletionQueriesAndMutations(GraphQLTestCase):
             password="superstrongpassword",
         )
 
-        class Mutation(CartMutation, AuthMutation, graphene.ObjectType):
+        class Mutation(CartMutations, AuthMutation, graphene.ObjectType):
             pass
 
         schema = graphene.Schema(mutation=Mutation)

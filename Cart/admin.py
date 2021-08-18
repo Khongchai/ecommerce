@@ -1,5 +1,12 @@
+from store.models import Product
 from django.contrib import admin
 from .models import Cart
 
-# Register your models here.
-admin.site.register(Cart)
+class ProductInline(admin.TabularInline):
+    model = Product
+
+class CartAdmin(admin.ModelAdmin):
+    inlines = [
+        ProductInline,
+    ]
+admin.site.register(Cart, CartAdmin)
