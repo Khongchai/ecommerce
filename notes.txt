@@ -1,10 +1,7 @@
 https://cloudinary.com/documentation/control_access_to_media << after user purchased
 
 
-1. Create an empty cart for a customer or if there exist a cart without a customer, use that.
-2. test it 
-3. set up front end, then get thecart
+Write test for add_remove items from cart
 
-mock test_get_or_create_cart https://stackoverflow.com/questions/64213431/how-to-mock-info-context-in-django-graphene-tests
 
 Read full text search

@@ -3,10 +3,10 @@ import uuid
 
 import graphene
 from django.test import TestCase
-from graphene.test import Client
 from ecommerce.graphene_mutations.cart_mutations import CartMutations
 from ecommerce.graphene_mutations.user_mutations import AuthMutation
 from ecommerce.graphene_queries.cart_queries import CartsQuery
+from graphene.test import Client
 from graphene_django.utils.testing import GraphQLTestCase
 from store.models import Composition, Product
 from users.models import CustomUser
@@ -237,7 +237,53 @@ class TestCartCompletionQueriesAndMutations(GraphQLTestCase):
         self.assertFalse(executed["data"]["getOrCreateAndGetCart"]["cart"]["complete"])
 
         
-    def test_add_items_to_cart(self):
-        #TODO
-        pass 
+    # def test_add_remove_items_to_cart_not_authenticated(self):
 
+    #     class Mutation(CartMutations, graphene.ObjectType):
+    #         pass
+
+    #     schema = graphene.Schema(mutation=Mutation)
+    #     product_1: Product = Product.objects.get(image_link="product_1_img_link")
+    #     mutation = """
+    #         mutation{
+    #         addOrRemoveCartItem(operation:"add", productId: 2){
+    #             addedOrRemovedProduct{
+    #             id
+    #             }
+    #         }
+    #         }
+    #     """
+    #     client = Client(schema)
+    #     variables = { "operation": "add", "productId": product_1.pk }
+    #     self.assertRaises(Exception, client.execute(mutation, variables=variables, context={"user": AnonymousUser}))
+        
+
+    def test_add_remove_items_to_cart_authenticated(self):
+
+        class Mutation(CartMutations, graphene.ObjectType):
+            pass
+
+        schema = graphene.Schema(mutation=Mutation)
+        product_1: Product = Product.objects.get(image_link="product_1_img_link")
+        user_1 = CustomUser.objects.get(username="tester")
+        mutation = """
+            mutation addOrRemoveCartItem($operation: String!, $productId: Int!){
+            addOrRemoveCartItem(operation: $operation, productId: $productId){
+                productsInCart{
+                id
+                cart{
+                    id
+                }
+                }
+            }
+            }
+        """
+        client = Client(schema)
+        variables = { "operation": "add", "productId": product_1.pk }
+
+        result = client.execute(mutation, variables=variables, context={"user": user_1})
+
+        returned_products = result["data"]["addOrRemoveCartItem"]["productsInCart"]
+        self.assertEqual(returned_products[0]["id"], str(product_1.pk))
+        self.assertEqual(returned_products[0]["cart"]["id"], str(user_1.cart.pk))
+        

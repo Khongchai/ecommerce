@@ -1,3 +1,4 @@
+from utils.get_authenticated_user import get_authenticated_user
 import uuid
 
 import graphene
@@ -49,18 +50,14 @@ class CreateOrGetEmptyCartMutation(graphene.Mutation):
         """
         del unused_root
 
-        # top for testing, bottom for actual request
-        try:
-            logged_in = info.context["user"]
-        except:
-            logged_in = info.context.user
+        user = get_authenticated_user(info)
 
-        if logged_in.is_anonymous:
+        if user.is_anonymous:
             #TODO handle cart for user not logged in.
             raise ValueError("Handling anonymous user is not yet implemented")
 
         # Does not get a completed cart from the same user
-        cart: Cart = Cart.objects.get_or_create(customer=logged_in, complete=False, transaction_id=None)
+        cart: Cart = Cart.objects.get_or_create(customer=user, complete=False, transaction_id=None)
         return CreateOrGetEmptyCartMutation(cart=cart[0])
 
 
@@ -69,30 +66,32 @@ class AddOrRemoveCartItem(graphene.Mutation):
         Currently handles only authenticated users. 
     """
     class Arguments:
-        product_id = graphene.Int()
+        product_id = graphene.Int(required=True)
+        operation = graphene.String(required=True)
 
-    #On success, returns the added product or simply return true if user removes a product
-    added_product = graphene.Field(ProductType)
+    products_in_cart = graphene.List(ProductType)
 
     @classmethod
-    def mutate(cls, unused_root, info, product_id):
+    def mutate(cls, unused_root, info, product_id, operation):
         del unused_root
 
-        try:
-            logged_in = info.context["user"]
-        except:
-            logged_in = info.context.user
+        user = get_authenticated_user(info)
 
-        if logged_in.is_anonymous:
+        if user.is_anonymous:
             #TODO handle cart for user not logged in.
             raise ValueError("Handling anonymous user is not yet implemented")
-        
-        cart: Cart = Cart.objects.get_or_create(customer=logged_in, complete=False, transaction_id=None)
-        product_to_be_added = Product.objects.get(pk=product_id)
 
-        if cart and product_to_be_added:
-            cart.items_in_cart.add(product_to_be_added)
+        cart: Cart = Cart.objects.get_or_create(customer=user, complete=False, transaction_id=None)
+        cart = cart[0]
+        product = Product.objects.get(pk=product_id)
+
+        if cart and product:
+            cart.items_in_cart.add(product) if operation == "add" else cart.items_in_cart.remove(product)
             cart.save()
+            products_in_cart = cart.items_in_cart.all()
+
+            return AddOrRemoveCartItem(products_in_cart=products_in_cart)
+
         elif not cart:
             raise ValueError(f"Oops, something went wrong, this user does not have a cart attached!")
         else:

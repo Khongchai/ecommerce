@@ -1,4 +1,5 @@
 import graphene
+from promise.promise import S
 from .model_based_types import CartType, ProductType
 from graphql_auth.schema import UserNode
 
