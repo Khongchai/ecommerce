@@ -3,6 +3,7 @@ from .models import DataAfterPurchase, Product, Composition, Composer
 
 # Register your models here.
 admin.site.register(Product)
+admin.site.register(DataAfterPurchase)
 
 
 class ProductInline(admin.TabularInline):

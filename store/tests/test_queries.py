@@ -47,13 +47,11 @@ class TestQueries(TestCase):
             price_usd=10,
             image_link="product_1_image_link",
             composition=piece_1,
-            free=True
         )
         Product.objects.create(
             price_usd=20,
             image_link="product_2_image_link",
             composition=piece_2,
-            free=False
         )
 
 
@@ -300,7 +298,6 @@ class TestPaginatedQueries(TestCase):
             Product.objects.create(
                 price_usd=10,
                 image_link=f"{i}_image_link",
-                free=True
             )
 
         get_first_three = """
@@ -401,25 +398,21 @@ class TestPaginatedQueries(TestCase):
             price_usd=10,
             image_link=f"{moon}-link",
             composition=moon,
-            free=False,
         )
         Product.objects.create(
             price_usd=10,
             image_link=f"{lake}-link",
             composition=lake,
-            free=False,
         )
         Product.objects.create(
             price_usd=10,
             image_link=f"{meditation}-link",
             composition=meditation,
-            free=False,
         )
         Product.objects.create(
             price_usd=10,
             image_link=f"{arm}-link",
             composition=arm,
-            free=False,
         )
 
         class Query(ProductsQuery, graphene.ObjectType):

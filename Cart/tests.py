@@ -30,7 +30,6 @@ class TestCartQueries(TestCase):
             price_usd=10,
             image_link="product_1_img_link",
             composition=composition_1,
-            free=False,
         )
         cart:Cart = Cart.objects.create(
             customer=user_1,
@@ -100,13 +99,11 @@ class TestCartCompletionQueriesAndMutations(GraphQLTestCase):
             price_usd=10,
             image_link="product_1_img_link",
             composition=composition_1,
-            free=False,
         )
         product_2 = Product.objects.create(
             price_usd=10,
             image_link="product_2_img_link",
             composition=composition_2,
-            free=True,
         )
         cart_1:Cart = Cart.objects.create(
             customer=user_1,
@@ -176,11 +173,8 @@ class TestCartCompletionQueriesAndMutations(GraphQLTestCase):
         self.assertTrue(result.data["updateCartCompletion"]["cart"]["complete"])
         self.assertTrue(result.data["updateCartCompletion"]["cart"]["transactionId"])
 
-    def test_cart_uuid_auto_remove(self):
+    def test_uuid_should_be_removed_from_cart_when_complete_is_false(self):
         """
-            This test case checks if uuid is removed automatically from 
-            cart with complete = false
-
             This test uses the complete=true cart, set its completion to false through graphene resolver,
             then verify that the transaction_id(uuid) is automatically removed. 
         """
@@ -204,7 +198,7 @@ class TestCartCompletionQueriesAndMutations(GraphQLTestCase):
         self.assertFalse(result.data["updateCartCompletion"]["cart"]["transactionId"])
         
 
-    def test_get_or_create_cart(self):
+    def test_get_or_create_cart_for_users(self):
         """
             Checks that if user doesn't already have a cart, create and get one. 
         """
@@ -258,7 +252,7 @@ class TestCartCompletionQueriesAndMutations(GraphQLTestCase):
     #     self.assertRaises(Exception, client.execute(mutation, variables=variables, context={"user": AnonymousUser}))
         
 
-    def test_add_remove_items_to_cart_authenticated(self):
+    def test_should_add_or_remove_items_to_cart_for_authenticated_user(self):
 
         class Mutation(CartMutations, graphene.ObjectType):
             pass

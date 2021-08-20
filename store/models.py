@@ -40,9 +40,6 @@ class Product(models.Model):
     image_link = models.URLField(max_length = 500)
     # when this field is deleted, set the authenticated_data field of Product to null
     composition = models.OneToOneField(Composition , on_delete=models.SET_NULL, null=True, blank=True, related_name="product")
-    # free = false means free for only students
-    # free = true means free for everyone
-    free = models.BooleanField(default=False)
     cart = models.ForeignKey(Cart, on_delete=models.SET_NULL, null=True, blank=True, related_name="items_in_cart")
 
     def __str__(self):
