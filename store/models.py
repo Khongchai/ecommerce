@@ -1,4 +1,5 @@
 from Cart.models import Cart
+from users.models import CustomUser
 from django.db import models
 
 # Add fixtures in the order the models are added.
@@ -26,6 +27,7 @@ class DataAfterPurchase(models.Model):
     pdf_link = models.URLField(max_length = 500, blank=True, null=True)
     # A composition can have many movments. The data for the movements can live on separate locations.
     composition = models.ForeignKey(Composition, on_delete=models.CASCADE,  null=True, blank=True, related_name="links")
+    purchased_by = models.ManyToManyField(CustomUser, related_name="purchased_items")
 
     @property
     def name(self):
