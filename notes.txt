@@ -1,7 +1,8 @@
 https://cloudinary.com/documentation/control_access_to_media << after user purchased
 
 
-Write test for add_remove items from cart
+Write test & implement what happens when user purchases stuff
 
+Write test & implement what happens when user already owns something (should also be reflected in the UI).
 
-Read full text search
+Read more about full text search
