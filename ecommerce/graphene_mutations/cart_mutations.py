@@ -1,3 +1,5 @@
+from typing import List
+from django.db.models.fields import IntegerField
 from utils.get_authenticated_user import get_authenticated_user
 import uuid
 
@@ -46,14 +48,14 @@ class CreateOrGetEmptyCartMutation(graphene.Mutation):
             On page loads, if user doesn't already have a cart
             return the first empty cart with user set to current user 
 
-            TODO => when user not logged in
+            TODO? => when user not logged in
         """
         del unused_root
 
         user = get_authenticated_user(info)
 
         if user.is_anonymous:
-            #TODO handle cart for user not logged in.
+            #TODO? handle cart for user not logged in.
             raise ValueError("Handling anonymous user is not yet implemented")
 
         # Does not get a completed cart from the same user
@@ -97,8 +99,42 @@ class AddOrRemoveCartItem(graphene.Mutation):
         else:
             raise ValueError(f"The product with id {product_id} does not exist")
 
+
+class AddDataAfterPurchaseToUserAfterCheckout(graphene.Mutation):
+    """
+        Currently handles only authenticated users. 
+
+        No need for any arguments, just attach everything in the user's cart to the user model.
+    """
+    class Arguments: 
+        pass
+
+    purchase_success = graphene.Boolean(required=True)
+
+    @classmethod
+    def mutate(cls, unused_root, info, composition_ids):
+        del unused_root
+
+        user = get_authenticated_user(info)
+
+        if user.is_anonymous:
+            #TODO handle cart for user not logged in.
+            raise ValueError("Handling anonymous user is not yet implemented")
+
+        cart: Cart = Cart.objects.get(customer=user, complete=False, transaction_id=None)
+
+        all_products_in_cart = cart.items_in_cart.all()
+        compositions = [product.composition for product in all_products_in_cart]
+        data_to_be_added = [composition.links.all() for composition in compositions]
+        #TODO
+
+
+        return AddDataAfterPurchaseToUserAfterCheckout(purchase_success=True)
+
  
 class CartMutations(graphene.ObjectType):
     update_cart_completion = CartCompletionMutation.Field()
     get_or_create_and_get_cart = CreateOrGetEmptyCartMutation.Field()
     add_or_remove_cart_item = AddOrRemoveCartItem.Field()
+    add_data_after_purchase_to_user_after_checkout = AddDataAfterPurchaseToUserAfterCheckout.Field()
+    

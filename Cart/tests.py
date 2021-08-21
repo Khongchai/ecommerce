@@ -1,4 +1,4 @@
-import json
+from back.ecommerce.store.models import DataAfterPurchase
 import uuid
 
 import graphene
@@ -8,7 +8,7 @@ from ecommerce.graphene_mutations.user_mutations import AuthMutation
 from ecommerce.graphene_queries.cart_queries import CartsQuery
 from graphene.test import Client
 from graphene_django.utils.testing import GraphQLTestCase
-from store.models import Composition, Product
+from store.models import Composer, Composition, Product
 from users.models import CustomUser
 
 from .models import Cart
@@ -144,7 +144,7 @@ class TestCartCompletionQueriesAndMutations(GraphQLTestCase):
         #Then transaction_id should exist for complete=True and removed for complete=False
         self.assertEqual(query_result.data, query_expected)
 
-    def test_cart_uuid_auto_gen_when_cart_is_set_to_true(self):
+    def test_cart_uuid_should_auto_gen_when_cart_is_set_to_true(self):
         # Given a cart whose transaction_id has not yet been set,
 
         # when the transaction_id is  set through a mutation,
@@ -315,4 +315,40 @@ class TestCartCompletionQueriesAndMutations(GraphQLTestCase):
         returned_products = result["data"]["addOrRemoveCartItem"]["productsInCart"]
         self.assertEqual(len(returned_products), 0)
         
-        
+class TestPurchase(GraphQLTestCase):
+
+    def setup():
+        # Given a user who has a few items in their cart and ready to checkout.
+        composer = Composer.objects.create(
+            name="Jeff"
+        )
+
+        piece_1 = Composition.objects.create(
+            name="Jeff's Song 1",
+        )
+        piece_1.composers.add(composer)
+        piece_2 = Composition.objects.create(
+            name="Jeff's Song 2"
+        )
+        piece_2.composers.add(composer)
+
+        piece_1_data = DataAfterPurchase.objects.create(
+            midi_link="purchase_data1_midi_link",
+            wav_link="purchase_data1_wav_link",
+            flac_link="purchase_data1_flac_link",
+            pdf_link="purchase_data1_pdf_link",
+            composition=piece_1
+        )
+        piece_2_data = DataAfterPurchase.objects.create(
+            midi_link="purchase_data1_midi_link",
+            wav_link="purchase_data1_wav_link",
+            flac_link="purchase_data1_flac_link",
+            pdf_link="purchase_data1_pdf_link",
+            composition=piece_2
+        )
+
+        user = CustomUser.objects.create(
+            email= "tester@tester.com",
+            username= "tester",
+            password="strongpassword",
+        )

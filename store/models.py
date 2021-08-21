@@ -28,6 +28,7 @@ class DataAfterPurchase(models.Model):
     # A composition can have many movments. The data for the movements can live on separate locations.
     composition = models.ForeignKey(Composition, on_delete=models.CASCADE,  null=True, blank=True, related_name="links")
     purchased_by = models.ManyToManyField(CustomUser, related_name="purchased_items")
+    
 
     @property
     def name(self):
