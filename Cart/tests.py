@@ -1,4 +1,4 @@
-from back.ecommerce.store.models import DataAfterPurchase
+from store.models import DataAfterPurchase
 import uuid
 
 import graphene
