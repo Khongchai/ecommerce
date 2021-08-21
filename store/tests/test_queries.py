@@ -174,19 +174,19 @@ class TestQueries(TestCase):
         composers_expected = {
             "allComposersInfo": [
                 {
-                    "compositions": [
-                        {
+                    "compositions": 
+                        [{
                             "name": "Eine Kleine Nacht Musik"
-                        }
-                    ],
+                        }]
+                    ,
                     "name": "Wolfgang Amadeus Mozart"        
                 },
                 {
-                    "compositions": [
-                        {
+                    "compositions": 
+                        [{
                             "name": "Moonlight Sonata"       
-                        }
-                    ],
+                        }]
+                    ,
                     "name": "Ludwig van Beethoven"
                 }
             ]
@@ -261,19 +261,19 @@ class TestQueries(TestCase):
         compositions_expected = {
             "allCompositionsInfo": [
                 {
-                    "links": [
+                    "links": 
                         {
                             "midiLink": "purchase_data1_midi_link"
                         }
-                    ],
+                    ,
                     "name": "Eine Kleine Nacht Musik"
                 },
                 {
-                    "links": [
+                    "links": 
                         {
                             "midiLink": "purchase_data2_midi_link"
                         }
-                    ],
+                    ,
                     "name": "Moonlight Sonata"
                 }
             ]
@@ -394,6 +394,15 @@ class TestPaginatedQueries(TestCase):
         meditation.composers.add(jules)
         arm.composers.add(traditional)
 
+        DataAfterPurchase.objects.create(
+            wav_link="lake.wav",
+            composition=lake,
+        )
+        DataAfterPurchase.objects.create(
+            pdf_link="moon.pdf",
+            composition=moon,
+        )
+
         Product.objects.create(
             price_usd=10,
             image_link=f"{moon}-link",
@@ -435,6 +444,32 @@ class TestPaginatedQueries(TestCase):
                 }
         """
 
+        swan_lake = """
+            query{
+                allProductsInfo(search: "wav", limit: -1, page: 1)
+                {
+                    products{
+                        composition{
+                            name
+                        }
+                    }
+                }
+            } 
+        """
+
+        song_to_the_moon = """
+            query{
+                allProductsInfo(search: "pdf", limit: -1, page: 1)
+                {
+                    products{
+                        composition{
+                            name
+                        }
+                    }
+                }
+            } 
+        """
+
         debussy_and_massenet_result = schema.execute(debussy_and_massenet)
         self.assertEqual(debussy_and_massenet_result.data["allProductsInfo"]["products"][0]
                         ["composition"]["composers"][0]["name"], "Achille-Claude Debussy")
@@ -442,7 +477,14 @@ class TestPaginatedQueries(TestCase):
                         ["composition"]["composers"][1]["name"], "Achille-Claude Debussy2")
         self.assertEqual(debussy_and_massenet_result.data["allProductsInfo"]["products"][1]
                         ["composition"]["composers"][0]["name"], "Jules Émile Frédéric Massenet")
+
+        swan_lake_result = schema.execute(swan_lake)
+        self.assertEqual(swan_lake_result.data["allProductsInfo"]["products"][0]
+                        ["composition"]["name"], "Swan Lake")
         
+        song_to_the_moon_result = schema.execute(song_to_the_moon)
+        self.assertEqual(song_to_the_moon_result.data["allProductsInfo"]["products"][0]
+                        ["composition"]["name"], "A Song to the Moon")
         
 
 

@@ -25,8 +25,12 @@ class DataAfterPurchase(models.Model):
     wav_link = models.URLField(max_length = 500, blank=True, null=True)
     flac_link = models.URLField(max_length = 500, blank=True, null=True)
     pdf_link = models.URLField(max_length = 500, blank=True, null=True)
-    # A composition can have many movments. The data for the movements can live on separate locations.
-    composition = models.ForeignKey(Composition, on_delete=models.CASCADE,  null=True, blank=True, related_name="links")
+
+    """
+        In previous version, all movements are linked to one composition,
+        now, each movement gets its own composition model, eg. Mozart Piano Concert No.21 2nd mvt 
+    """
+    composition = models.OneToOneField(Composition, on_delete=models.CASCADE,  null=True, blank=True, related_name="links")
     purchased_by = models.ManyToManyField(CustomUser, related_name="purchased_items")
     
 

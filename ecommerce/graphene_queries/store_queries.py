@@ -39,7 +39,12 @@ class ProductsQuery(graphene.ObjectType):
         all_products = Product.objects.select_related("composition").all().order_by("composition__name")
         filtered_products = all_products.filter(
                                 Q(composition__name__unaccent__icontains=search) |
-                                Q(composition__composers__name__unaccent__icontains=search)
+                                Q(composition__composers__name__unaccent__icontains=search) | 
+                                #search also in the file extension, some users might look up for "wav", "flac", etc
+                                Q(composition__links__midi_link__icontains=search) | 
+                                Q(composition__links__flac_link__icontains=search) | 
+                                Q(composition__links__pdf_link__icontains=search) | 
+                                Q(composition__links__wav_link__icontains=search) 
                             ).distinct() if search else all_products
         paginator = Paginator(filtered_products, limit)
         paginated_products = paginator.page(page)
