@@ -225,28 +225,7 @@ class TestCartCompletionQueriesAndMutations(GraphQLTestCase):
         # a cart should automatically be created for this user.
         self.assertEqual(executed["data"]["getOrCreateAndGetCart"]["cart"]["id"], str(new_user.cart.id))
         self.assertFalse(executed["data"]["getOrCreateAndGetCart"]["cart"]["complete"])
-
-        
-    # def test_add_remove_items_to_cart_not_authenticated(self):
-
-    #     class Mutation(CartMutations, graphene.ObjectType):
-    #         pass
-
-    #     schema = graphene.Schema(mutation=Mutation)
-    #     product_1: Product = Product.objects.get(image_link="product_1_img_link")
-    #     mutation = """
-    #         mutation{
-    #         addOrRemoveCartItem(operation:"add", productId: 2){
-    #             addedOrRemovedProduct{
-    #             id
-    #             }
-    #         }
-    #         }
-    #     """
-    #     client = Client(schema)
-    #     variables = { "operation": "add", "productId": product_1.pk }
-    #     self.assertRaises(Exception, client.execute(mutation, variables=variables, context={"user": AnonymousUser}))
-        
+ 
 
     def test_should_add_add_item_to_cart_for_authenticated_user(self):
 
@@ -318,7 +297,12 @@ class TestCartCompletionQueriesAndMutations(GraphQLTestCase):
 class TestPurchase(GraphQLTestCase):
 
     def setup():
-        # Given a user who has a few items in their cart and ready to checkout.
+       pass
+    
+    def test_should_attach_data_to_user_after_checkout(self):
+
+
+         # Given a user who has a few items in their cart and ready to checkout,
         composer = Composer.objects.create(
             name="Jeff"
         )
@@ -332,14 +316,14 @@ class TestPurchase(GraphQLTestCase):
         )
         piece_2.composers.add(composer)
 
-        piece_1_data = DataAfterPurchase.objects.create(
+        DataAfterPurchase.objects.create(
             midi_link="purchase_data1_midi_link",
             wav_link="purchase_data1_wav_link",
             flac_link="purchase_data1_flac_link",
             pdf_link="purchase_data1_pdf_link",
             composition=piece_1
         )
-        piece_2_data = DataAfterPurchase.objects.create(
+        DataAfterPurchase.objects.create(
             midi_link="purchase_data1_midi_link",
             wav_link="purchase_data1_wav_link",
             flac_link="purchase_data1_flac_link",
@@ -347,8 +331,45 @@ class TestPurchase(GraphQLTestCase):
             composition=piece_2
         )
 
+        product_1 = Product.objects.create(
+            price_usd=10,
+            image_link="product_1_image_link",
+            composition=piece_1,
+        )
+        product_2 = Product.objects.create(
+            price_usd=10,
+            image_link="product_1_image_link",
+            composition=piece_2,
+        )
+
         user = CustomUser.objects.create(
             email= "tester@tester.com",
             username= "tester",
             password="strongpassword",
         )
+
+        user_cart = Cart.objects.create(customer=user, complete=False, transaction_id=None)
+        user_cart.items_in_cart.add(product_1, product_2)
+
+        # when the user clicks pay and paypal has successfully processed the user's payment,
+        class Mutation(CartMutations, graphene.ObjectType):
+            pass
+
+        schema = graphene.Schema(mutation=Mutation)
+        mutation = """
+            mutation{
+            addDataAfterPurchaseToUserAfterCheckout{
+                purchaseSuccess
+            }
+            }
+        """
+        client = Client(schema)
+
+        # then the data should now be attached to this user and this user should be able to access it anytime.
+        self.assertEqual(len(user.purchased_items.all()), 0)
+
+        result = client.execute(mutation, context={"user": user})
+
+        self.assertTrue(result["data"]["addDataAfterPurchaseToUserAfterCheckout"]["purchaseSuccess"])
+        self.assertEqual(user.purchased_items.all().first().composition.name, "Jeff's Song 1" or "Jeff's Song 2")
+        self.assertEqual(len(user.purchased_items.all()), 2)

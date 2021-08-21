@@ -10,6 +10,9 @@ from store.models import Product
 from users.models import CustomUser
 
 
+"""
+    This mutation is needed just in case the user needs to reopen cart for some reason.
+"""
 class CartCompletionMutation(graphene.Mutation):
     class Arguments:
         username = graphene.String()
@@ -112,22 +115,31 @@ class AddDataAfterPurchaseToUserAfterCheckout(graphene.Mutation):
     purchase_success = graphene.Boolean(required=True)
 
     @classmethod
-    def mutate(cls, unused_root, info, composition_ids):
+    def mutate(cls, unused_root, info):
         del unused_root
 
         user = get_authenticated_user(info)
 
         if user.is_anonymous:
-            #TODO handle cart for user not logged in.
-            raise ValueError("Handling anonymous user is not yet implemented")
+            #TODO handle cart for user not logged in?
+            raise ValueError("Handling anonymous user is not yet implemented.")
 
-        cart: Cart = Cart.objects.get(customer=user, complete=False, transaction_id=None)
+        try:
+            cart: Cart = Cart.objects.get(customer=user, complete=False, transaction_id=None)
+        except:
+            raise ValueError("Something's wrong; this user does not have a cart.")
 
         all_products_in_cart = cart.items_in_cart.all()
         compositions = [product.composition for product in all_products_in_cart]
-        data_to_be_added = [composition.links.all() for composition in compositions]
-        #TODO
+        data_to_be_added = [composition.links for composition in compositions]
+        cart.complete = True
+        cart.transaction_id = uuid.uuid4() 
+        cart.save()
 
+        if cart.complete:
+            for data in data_to_be_added:
+                data.purchased_by.add(user) 
+                data.save()
 
         return AddDataAfterPurchaseToUserAfterCheckout(purchase_success=True)
 

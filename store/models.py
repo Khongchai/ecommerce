@@ -51,4 +51,4 @@ class Product(models.Model):
 
     def __str__(self):
         call_this = self.composition.name if self.composition else "Not yet assigned to a composition"
-        return call_this
+        return call_this + "-product"
