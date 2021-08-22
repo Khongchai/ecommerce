@@ -3,7 +3,7 @@
     "model": "store.Composition",
     "pk": 1,
     "fields": {
-      "name": "Korngold Violin Concerto in D Major",
+      "name": "Korngold Violin Concerto in D Major mvt. 1",
       "composers": [9]
     }
   },

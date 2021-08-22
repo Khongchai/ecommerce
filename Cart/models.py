@@ -8,6 +8,7 @@ from django.conf import settings
 
 # A cart is assigned automatically to both a logged-in and not-logged-in users
 # Focus on logged-in users first
+#TODO change customer to ForeignKey 
 class Cart(models.Model):
     customer = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="cart")
     transaction_id = models.CharField(max_length=100, null=True, blank=True)
@@ -19,5 +20,6 @@ class Cart(models.Model):
             If cart is complete, display: {user}-complete-{transaction-id} 
             else, display: {user}-current
         """
-        return f"{self.customer.username}-complete-{self.transaction_id}" if self.complete else f"{self.customer.username}-current"
+        # return f"{self.customer.username}-complete-{self.transaction_id}" if self.complete else f"{self.customer.username}-current"
+        return {self.customer.name + "-cart"}
 
