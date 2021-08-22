@@ -46,7 +46,7 @@ class Product(models.Model):
     price_usd = models.DecimalField(max_digits=7, decimal_places=2)
     image_link = models.URLField(max_length = 500)
     # when this field is deleted, set the authenticated_data field of Product to null
-    composition = models.OneToOneField(Composition , on_delete=models.SET_NULL, null=True, blank=True, related_name="product")
+    composition = models.OneToOneField(Composition , on_delete=models.CASCADE, null=False, blank=False, default=None, related_name="product")
     cart = models.ForeignKey(Cart, on_delete=models.SET_NULL, null=True, blank=True, related_name="items_in_cart")
 
     def __str__(self):

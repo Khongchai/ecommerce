@@ -15,6 +15,7 @@ from .models import Cart
 
 
 class TestCartQueries(TestCase):
+
     maxDiff = None
 
     def setUp(self):
@@ -144,6 +145,7 @@ class TestCartCompletionQueriesAndMutations(GraphQLTestCase):
         #Then transaction_id should exist for complete=True and removed for complete=False
         self.assertEqual(query_result.data, query_expected)
 
+
     def test_cart_uuid_should_auto_gen_when_cart_is_set_to_true(self):
         # Given a cart whose transaction_id has not yet been set,
 
@@ -167,6 +169,7 @@ class TestCartCompletionQueriesAndMutations(GraphQLTestCase):
         # the transaction_id should automatically be set.
         self.assertTrue(result.data["updateCartCompletion"]["cart"]["complete"])
         self.assertTrue(result.data["updateCartCompletion"]["cart"]["transactionId"])
+
 
     def test_uuid_should_be_removed_from_cart_when_complete_is_false(self):
         # Given a cart with complete=True,
@@ -295,13 +298,9 @@ class TestCartCompletionQueriesAndMutations(GraphQLTestCase):
         
 class TestPurchase(GraphQLTestCase):
 
-    def setup():
-       pass
-    
-    def test_should_attach_data_to_user_after_checkout(self):
+    maxDiff=None
 
-
-         # Given a user who has a few items in their cart and ready to checkout,
+    def setUp(self):
         composer = Composer.objects.create(
             name="Jeff"
         )
@@ -323,29 +322,36 @@ class TestPurchase(GraphQLTestCase):
             composition=piece_1
         )
         DataAfterPurchase.objects.create(
-            midi_link="purchase_data1_midi_link",
-            wav_link="purchase_data1_wav_link",
-            flac_link="purchase_data1_flac_link",
-            pdf_link="purchase_data1_pdf_link",
+            midi_link="purchase_data2_midi_link",
+            wav_link="purchase_data2_wav_link",
+            flac_link="purchase_data2_flac_link",
+            pdf_link="purchase_data2_pdf_link",
             composition=piece_2
         )
 
-        product_1 = Product.objects.create(
+        Product.objects.create(
             price_usd=10,
             image_link="product_1_image_link",
             composition=piece_1,
         )
-        product_2 = Product.objects.create(
+        Product.objects.create(
             price_usd=10,
-            image_link="product_1_image_link",
+            image_link="product_2_image_link",
             composition=piece_2,
         )
 
+
+    def test_should_attach_data_to_user_after_checkout(self):
+
+        # Given a user who has a few items in their cart and ready to checkout,
         user = CustomUser.objects.create(
             email= "tester@tester.com",
             username= "tester",
             password="strongpassword",
         )
+        
+        product_1 = Product.objects.get(image_link="product_1_image_link")
+        product_2 = Product.objects.get(image_link="product_2_image_link")
 
         user_cart = Cart.objects.create(customer=user, complete=False, transaction_id=None)
         user_cart.items_in_cart.add(product_1, product_2)
@@ -372,3 +378,40 @@ class TestPurchase(GraphQLTestCase):
         self.assertTrue(result["data"]["addDataAfterPurchaseToUserAfterCheckout"]["purchaseSuccess"])
         self.assertEqual(user.purchased_items.all().first().composition.name, "Jeff's Song 1" or "Jeff's Song 2")
         self.assertEqual(len(user.purchased_items.all()), 2)
+
+
+    def test_nothing_should_change_if_purchase_same_product_twice(self):
+
+        # Given a user who already owns 1 product
+        user = CustomUser.objects.create(
+            email="tester2@tester.com",
+            username="tester2",
+            password="strongpassword"
+        )
+        Cart.objects.create(customer=user, complete=False, transaction_id=None)
+        data_1 = DataAfterPurchase.objects.get(midi_link="purchase_data1_midi_link")
+        data_1.purchased_by.add(user)
+        self.assertEqual(1, len(user.purchased_items.all()))
+
+        # when the user, somehow, buys the same thing again
+        class Mutation(CartMutations, graphene.ObjectType):
+            pass
+
+        schema = graphene.Schema(mutation=Mutation)
+        mutation = """
+            mutation{
+            addDataAfterPurchaseToUserAfterCheckout{
+                purchaseSuccess
+            }
+            }
+        """
+        client = Client(schema)
+
+        # then nothing should happens, everything should still be the same.
+        result = client.execute(mutation, context={"user": user})
+        self.assertTrue(result["data"]["addDataAfterPurchaseToUserAfterCheckout"]["purchaseSuccess"])
+        self.assertEqual(1, len(user.purchased_items.all()))
+
+
+
+        

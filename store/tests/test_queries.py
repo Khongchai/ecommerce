@@ -297,9 +297,13 @@ class TestPaginatedQueries(TestCase):
 
         # For pagination test
         for i in range(20):
+            composition = Composition.objects.create(
+                name=f"{i}-whatever"
+            )
             Product.objects.create(
                 price_usd=10,
                 image_link=f"{i}_image_link",
+                composition=composition
             )
 
         get_first_three = """
