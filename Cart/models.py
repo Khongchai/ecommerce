@@ -20,6 +20,5 @@ class Cart(models.Model):
             If cart is complete, display: {user}-complete-{transaction-id} 
             else, display: {user}-current
         """
-        # return f"{self.customer.username}-complete-{self.transaction_id}" if self.complete else f"{self.customer.username}-current"
-        return {self.customer.name + "-cart"}
+        return f"{self.customer.username}-complete-{self.transaction_id}" if self.complete else f"{self.customer.username}-current"
 
