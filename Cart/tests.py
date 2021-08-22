@@ -222,19 +222,18 @@ class TestCartCompletionQueriesAndMutations(GraphQLTestCase):
         client = Client(schema)
         executed = client.execute(mutation, context={"user": new_user})
 
-        # a cart should automatically be created for this user.
-        self.assertEqual(executed["data"]["getOrCreateAndGetCart"]["cart"]["id"], str(new_user.cart.id))
+        # a cart, which is also the customer's first cart, should automatically be created for this user.
+        self.assertEqual(executed["data"]["getOrCreateAndGetCart"]["cart"]["id"], str(new_user.carts.all().first().pk))
         self.assertFalse(executed["data"]["getOrCreateAndGetCart"]["cart"]["complete"])
  
 
     def test_should_add_add_item_to_cart_for_authenticated_user(self):
 
-
         # Given an authenticated user and a product that the user hasn't yet added,
         product_1: Product = Product.objects.get(image_link="product_1_img_link")
         user_1 = CustomUser.objects.get(username="tester")
 
-        # when the user adds the product through the addOrRemoveCartItem mutation,
+        # when the user adds the product,
         class Mutation(CartMutations, graphene.ObjectType):
             pass
 
@@ -258,7 +257,7 @@ class TestCartCompletionQueriesAndMutations(GraphQLTestCase):
         result = client.execute(mutation, variables=variables, context={"user": user_1})
         returned_products = result["data"]["addOrRemoveCartItem"]["productsInCart"]
         self.assertEqual(returned_products[0]["id"], str(product_1.pk))
-        self.assertEqual(returned_products[0]["cart"]["id"], str(user_1.cart.pk))
+        self.assertEqual(returned_products[0]["cart"]["id"], str(user_1.carts.all().first().pk))
         
 
     def test_should_remove_item_from_cart_for_authenticated_user(self):
@@ -266,7 +265,7 @@ class TestCartCompletionQueriesAndMutations(GraphQLTestCase):
         # Given an authenticated user whose cart only has one product.
         product_1: Product = Product.objects.get(image_link="product_1_img_link")
         user_1: CustomUser = CustomUser.objects.get(username="tester")
-        user_1_cart = user_1.cart
+        user_1_cart = user_1.carts.all().first()
         user_1_cart.items_in_cart.add(product_1)
 
         # when the user removes the product through the addOrRemoveCartItem mutation,

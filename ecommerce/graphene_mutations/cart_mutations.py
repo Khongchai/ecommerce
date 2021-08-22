@@ -62,8 +62,8 @@ class CreateOrGetEmptyCartMutation(graphene.Mutation):
             raise ValueError("Handling anonymous user is not yet implemented")
 
         # Does not get a completed cart from the same user
-        cart: Cart = Cart.objects.get_or_create(customer=user, complete=False, transaction_id=None)
-        return CreateOrGetEmptyCartMutation(cart=cart[0])
+        cart ,_  = Cart.objects.get_or_create(customer=user, complete=False, transaction_id=None)
+        return CreateOrGetEmptyCartMutation(cart=cart)
 
 
 class AddOrRemoveCartItem(graphene.Mutation):
