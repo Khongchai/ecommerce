@@ -1,6 +1,4 @@
-from typing import List
-from django.db.models.fields import IntegerField
-from utils.get_authenticated_user import get_authenticated_user
+from utils.get_user import get_user_from_context
 import uuid
 
 import graphene
@@ -38,6 +36,8 @@ class CartCompletionMutation(graphene.Mutation):
 """
     This mutation is currently superfluous,
     on prod if still not used, remove.
+
+    The functionality is already included with the meExtended query
 """
 class CreateOrGetEmptyCartMutation(graphene.Mutation):
     class Arguments:
@@ -55,7 +55,7 @@ class CreateOrGetEmptyCartMutation(graphene.Mutation):
         """
         del unused_root
 
-        user = get_authenticated_user(info)
+        user = get_user_from_context(info)
 
         if user.is_anonymous:
             #TODO? handle cart for user not logged in.
@@ -63,6 +63,7 @@ class CreateOrGetEmptyCartMutation(graphene.Mutation):
 
         # Does not get a completed cart from the same user
         cart ,_  = Cart.objects.get_or_create(customer=user, complete=False, transaction_id=None)
+        
         return CreateOrGetEmptyCartMutation(cart=cart)
 
 
@@ -80,7 +81,7 @@ class AddOrRemoveCartItem(graphene.Mutation):
     def mutate(cls, unused_root, info, product_id, operation):
         del unused_root
 
-        user = get_authenticated_user(info)
+        user = get_user_from_context(info)
 
         if user.is_anonymous:
             #TODO handle cart for user not logged in.
@@ -118,7 +119,7 @@ class AddDataAfterPurchaseToUserAfterCheckout(graphene.Mutation):
     def mutate(cls, unused_root, info):
         del unused_root
 
-        user = get_authenticated_user(info)
+        user = get_user_from_context(info)
 
         if user.is_anonymous:
             #TODO handle cart for user not logged in?

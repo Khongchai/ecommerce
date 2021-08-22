@@ -1,6 +1,7 @@
+from utils.get_user import get_user_from_context
 import graphene
 from store.models import Composer, Composition, Product, DataAfterPurchase
-from ..graphene_types.model_based_types import ComposerType, CompositionType, DataAfterPurchaseType
+from ..graphene_types.model_based_types import ComposerType, CompositionType, DataAfterPurchaseType, ProductType
 from ..graphene_types.custom_types import AllProductsDataType
 from django.core.paginator import Paginator
 from math import ceil
@@ -32,6 +33,8 @@ class ProductsQuery(graphene.ObjectType):
     all_products_info = graphene.Field(AllProductsDataType, search=graphene.String(required=False), 
                         limit=graphene.Int(required=False), page=graphene.Int(required=False))
 
+    products_purchased_by_current_user = graphene.List(DataAfterPurchaseType, required=True)
+
     def resolve_all_products_info(root, _, search, limit, page):
         limit = limit if limit and limit >= 0 else 9 if limit >= 0 else 9999
         page = max(page, 1) if page else 1
@@ -58,3 +61,18 @@ class ProductsQuery(graphene.ObjectType):
             }
         }
         return return_info
+
+    def resolve_products_purchased_by_current_user(unused_root, info):
+        del unused_root
+
+        user = get_user_from_context(info)
+
+        try: 
+            if  user.is_authenticated:
+                product_data = user.purchased_items.all()
+                return product_data
+            else:
+                return []
+        except:
+            return []
+

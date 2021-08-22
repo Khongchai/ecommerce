@@ -1,4 +1,4 @@
-def get_authenticated_user(info):
+def get_user_from_context(info):
     try:
             user = info.context["user"]
     except:
