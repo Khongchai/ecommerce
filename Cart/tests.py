@@ -295,7 +295,8 @@ class TestCartCompletionQueriesAndMutations(GraphQLTestCase):
         result = client.execute(mutation, variables=variables, context={"user": user_1})
         returned_products = result["data"]["addOrRemoveCartItem"]["productsInCart"]
         self.assertEqual(len(returned_products), 0)
-        
+
+
 class TestPurchase(GraphQLTestCase):
 
     maxDiff=None
@@ -411,7 +412,6 @@ class TestPurchase(GraphQLTestCase):
         result = client.execute(mutation, context={"user": user})
         self.assertTrue(result["data"]["addDataAfterPurchaseToUserAfterCheckout"]["purchaseSuccess"])
         self.assertEqual(1, len(user.purchased_items.all()))
-
 
 
         

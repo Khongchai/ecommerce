@@ -8,7 +8,6 @@ from django.conf import settings
 
 # A cart is assigned automatically to both a logged-in and not-logged-in users
 # Focus on logged-in users first
-#TODO change customer to ForeignKey 
 class Cart(models.Model):
     customer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="carts")
     transaction_id = models.CharField(max_length=100, null=True, blank=True)
