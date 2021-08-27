@@ -282,216 +282,7 @@ class TestQueries(TestCase):
         }
         self.assertEqual(data_after_purchase_result.data, data_after_purchase_expected)
         self.assertEqual(compositions_result.data, compositions_expected)
-        
-        
-class TestPaginatedQueries(TestCase):
 
-    maxDiff = None
-
-    def test_product_paginated_query(self):
-
-        class Query(ProductsQuery, graphene.ObjectType):
-            pass
-        
-        schema = graphene.Schema(query=Query)
-
-        # For pagination test
-        for i in range(20):
-            composition = Composition.objects.create(
-                name=f"{i}-whatever"
-            )
-            Product.objects.create(
-                price_usd=10,
-                image_link=f"{i}_image_link",
-                composition=composition
-            )
-
-        get_first_three = """
-            query{
-                allProductsInfo(search: "", page: 1, limit: 3)
-                {
-                    products{
-                        priceUsd
-                    }
-                    isFirst
-                    isLast
-                    pagePosition
-                    {
-                        page
-                        of
-                    }
-                }
-            } 
-        """
-
-        get_second_five = """
-            query{
-                allProductsInfo(search: "", page: 2, limit: 5)
-                {
-                    products{
-                        priceUsd
-                    }
-                    isFirst
-                    isLast
-                    pagePosition
-                    {
-                        page
-                        of
-                    }
-                }
-            } 
-        """
-
-        get_all = """
-            query
-            {
-                allProductsInfo(search: "", page: 1, limit: -1)
-                {
-                    isLast
-                    isFirst
-                    pagePosition {
-                        page
-                        of
-                    }
-                }
-            }
-
-        """
-
-        all_expected = {
-                "allProductsInfo": {
-                    "isFirst": True,
-                    "isLast": True,
-                    "pagePosition": {
-                        "of": 1,
-                        "page": 1
-                    }
-                }
-            } 
-        
-        all_result = schema.execute(get_all)
-        self.assertEqual(all_result.data, all_expected)
-        first_three_result = schema.execute(get_first_three)
-        self.assertEqual(len(first_three_result.data["allProductsInfo"]["products"]), 3)
-        self.assertEqual(first_three_result.data["allProductsInfo"]["pagePosition"], {"of": 7, "page": 1})
-        self.assertEqual(first_three_result.data["allProductsInfo"]["isFirst"], True)
-        self.assertEqual(first_three_result.data["allProductsInfo"]["isLast"], False)
-        second_five_result = schema.execute(get_second_five)
-        self.assertEqual(len(second_five_result.data["allProductsInfo"]["products"]), 5)
-        self.assertEqual(second_five_result.data["allProductsInfo"]["pagePosition"], {"of": 4, "page": 2})
-        self.assertEqual(second_five_result.data["allProductsInfo"]["isFirst"], False)
-        self.assertEqual(second_five_result.data["allProductsInfo"]["isLast"], False)
-
-    def test_product_searched_paginated_query(self):
-
-        claude = Composer.objects.create(name="Achille-Claude Debussy")
-        claude2 = Composer.objects.create(name="Achille-Claude Debussy2")
-        pyotr = Composer.objects.create(name="Pyotr Ilyich Tchaikovsky")
-        jules = Composer.objects.create(name="Jules Émile Frédéric Massenet")
-        traditional = Composer.objects.create(name="Traditional")
-
-        moon = Composition.objects.create(name="A Song to the Moon")
-        lake = Composition.objects.create(name="Swan Lake")
-        meditation = Composition.objects.create(name="Meditation")
-        arm = Composition.objects.create(name="Pierre's Right Arm")
-        moon.composers.add(claude)
-        moon.composers.add(claude2)
-        lake.composers.add(pyotr)
-        meditation.composers.add(jules)
-        arm.composers.add(traditional)
-
-        DataAfterPurchase.objects.create(
-            wav_link="lake.wav",
-            composition=lake,
-        )
-        DataAfterPurchase.objects.create(
-            pdf_link="moon.pdf",
-            composition=moon,
-        )
-
-        Product.objects.create(
-            price_usd=10,
-            image_link=f"{moon}-link",
-            composition=moon,
-        )
-        Product.objects.create(
-            price_usd=10,
-            image_link=f"{lake}-link",
-            composition=lake,
-        )
-        Product.objects.create(
-            price_usd=10,
-            image_link=f"{meditation}-link",
-            composition=meditation,
-        )
-        Product.objects.create(
-            price_usd=10,
-            image_link=f"{arm}-link",
-            composition=arm,
-        )
-
-        class Query(ProductsQuery, graphene.ObjectType):
-            pass
-        
-        schema = graphene.Schema(query=Query)
-        
-        debussy_and_massenet = """
-             query{
-                allProductsInfo(search: "ss", limit: -1, page: 1)
-                {
-                    products{
-                    composition{
-                        composers{
-                        name
-                        }
-                    }
-                    }
-                }
-                }
-        """
-
-        swan_lake = """
-            query{
-                allProductsInfo(search: "wav", limit: -1, page: 1)
-                {
-                    products{
-                        composition{
-                            name
-                        }
-                    }
-                }
-            } 
-        """
-
-        song_to_the_moon = """
-            query{
-                allProductsInfo(search: "pdf", limit: -1, page: 1)
-                {
-                    products{
-                        composition{
-                            name
-                        }
-                    }
-                }
-            } 
-        """
-
-        debussy_and_massenet_result = schema.execute(debussy_and_massenet)
-        self.assertEqual(debussy_and_massenet_result.data["allProductsInfo"]["products"][0]
-                        ["composition"]["composers"][0]["name"], "Achille-Claude Debussy")
-        self.assertEqual(debussy_and_massenet_result.data["allProductsInfo"]["products"][0]
-                        ["composition"]["composers"][1]["name"], "Achille-Claude Debussy2")
-        self.assertEqual(debussy_and_massenet_result.data["allProductsInfo"]["products"][1]
-                        ["composition"]["composers"][0]["name"], "Jules Émile Frédéric Massenet")
-
-        swan_lake_result = schema.execute(swan_lake)
-        self.assertEqual(swan_lake_result.data["allProductsInfo"]["products"][0]
-                        ["composition"]["name"], "Swan Lake")
-        
-        song_to_the_moon_result = schema.execute(song_to_the_moon)
-        self.assertEqual(song_to_the_moon_result.data["allProductsInfo"]["products"][0]
-                        ["composition"]["name"], "A Song to the Moon")
-        
 
 class TestPurchasedData(GraphQLTestCase):
 
@@ -516,6 +307,7 @@ class TestPurchasedData(GraphQLTestCase):
             wav_link="purchase_data1_wav_link",
             flac_link="purchase_data1_flac_link",
             pdf_link="purchase_data1_pdf_link",
+            youtube_link="purchase_data1_youtube_link",
             composition=piece_1
         )
         data_2 = DataAfterPurchase.objects.create(
@@ -523,6 +315,7 @@ class TestPurchasedData(GraphQLTestCase):
             wav_link="purchase_data2_wav_link",
             flac_link="purchase_data2_flac_link",
             pdf_link="purchase_data2_pdf_link",
+            youtube_link="purchase_data2_youtube_link",
             composition=piece_2
         )
 
@@ -553,38 +346,45 @@ class TestPurchasedData(GraphQLTestCase):
         schema = graphene.Schema(query=Query)
         query = """
             query{
-                productsPurchasedByCurrentUser{
-                    midiLink
-                    wavLink
-                    flacLink
-                    pdfLink
-                    composition{
-                    name
+                productsPurchasedByCurrentUser(page: 1, limit: 2, search: ""){
+                    data{
+                        midiLink
+                        wavLink
+                        flacLink
+                        pdfLink
+                        youtubeLink
+                        composition{
+                        name
+                        }
                     }
                 }
                 }
         """
         query_expected = {
-            "productsPurchasedByCurrentUser": [
-                {
-                    "midiLink": "purchase_data1_midi_link",
-                    "wavLink": "purchase_data1_wav_link",
-                    "flacLink": "purchase_data1_flac_link",
-                    "pdfLink": "purchase_data1_pdf_link",
-                    "composition": {
-                        "name": "Eine Kleine Nacht Musik"
+            "productsPurchasedByCurrentUser": {
+                "data": [
+                    {
+                        "midiLink": "purchase_data1_midi_link",
+                        "wavLink": "purchase_data1_wav_link",
+                        "flacLink": "purchase_data1_flac_link",
+                        "pdfLink": "purchase_data1_pdf_link",
+                        "youtubeLink": "purchase_data1_youtube_link",
+                        "composition": {
+                            "name": "Eine Kleine Nacht Musik"
+                        }
+                    },
+                    {
+                        "midiLink": "purchase_data2_midi_link",
+                        "wavLink": "purchase_data2_wav_link",
+                        "flacLink": "purchase_data2_flac_link",
+                        "pdfLink": "purchase_data2_pdf_link",
+                        "youtubeLink": "purchase_data2_youtube_link",
+                        "composition": {
+                            "name": "Moonlight Sonata"
+                        }
                     }
-                },
-                {
-                    "midiLink": "purchase_data2_midi_link",
-                    "wavLink": "purchase_data2_wav_link",
-                    "flacLink": "purchase_data2_flac_link",
-                    "pdfLink": "purchase_data2_pdf_link",
-                    "composition": {
-                        "name": "Moonlight Sonata"
-                    }
-                }
-            ]
+                ]
+            }
         }
 
         client = Client(schema)

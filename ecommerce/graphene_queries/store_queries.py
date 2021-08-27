@@ -1,11 +1,11 @@
+from utils.paginate import paginate
+from utils.search_through_composition import search_through_composition
+from utils.check_and_get_pagination_values import check_and_get_pagination_values
 from utils.get_user import get_user_from_context
 import graphene
 from store.models import Composer, Composition, Product, DataAfterPurchase
 from ..graphene_types.model_based_types import ComposerType, CompositionType, DataAfterPurchaseType, ProductType
-from ..graphene_types.custom_types import AllProductsDataType
-from django.core.paginator import Paginator
-from math import ceil
-from django.db.models import Q
+from ..graphene_types.custom_types import AllProductsDataType, AllPurchasedDataType
 
 
 class ComposersQuery(graphene.ObjectType):
@@ -33,46 +33,58 @@ class ProductsQuery(graphene.ObjectType):
     all_products_info = graphene.Field(AllProductsDataType, search=graphene.String(required=False), 
                         limit=graphene.Int(required=False), page=graphene.Int(required=False))
 
-    products_purchased_by_current_user = graphene.List(DataAfterPurchaseType, required=True)
+    products_purchased_by_current_user = graphene.Field(AllPurchasedDataType, 
+                        search=graphene.String(required=False), limit=graphene.Int(required=False), 
+                        page=graphene.Int(required=False))
+
 
     def resolve_all_products_info(root, _, search, limit, page):
-        limit = limit if limit and limit >= 0 else 9 if limit >= 0 else 9999
-        page = max(page, 1) if page else 1
+        limit, page = check_and_get_pagination_values(limit, page)
 
         all_products = Product.objects.select_related("composition").all().order_by("composition__name")
-        filtered_products = all_products.filter(
-                                Q(composition__name__unaccent__icontains=search) |
-                                Q(composition__composers__name__unaccent__icontains=search) | 
-                                #search also in the file extension, some users might look up for "wav", "flac", etc
-                                Q(composition__links__midi_link__icontains=search) | 
-                                Q(composition__links__flac_link__icontains=search) | 
-                                Q(composition__links__pdf_link__icontains=search) | 
-                                Q(composition__links__wav_link__icontains=search) 
-                            ).distinct() if search else all_products
-        paginator = Paginator(filtered_products, limit)
-        paginated_products = paginator.page(page)
+
+        filtered_products = search_through_composition(all_products, search)
+
+        paginated_products, is_first, is_last, page_position = paginate(
+            filtered_products, limit, page
+        )
+        
         return_info = {
-            "products": paginated_products.object_list,
-            "is_first": not paginated_products.has_previous(),
-            "is_last": not paginated_products.has_next(),
-            "page_position": {
-                "page": page,
-                "of": ceil(paginator.count / limit)
-            }
+            "products": paginated_products,
+            "is_first": is_first,
+            "is_last": is_last,
+            "page_position": page_position
         }
         return return_info
 
-    def resolve_products_purchased_by_current_user(unused_root, info):
+
+    def resolve_products_purchased_by_current_user(unused_root, info, search, limit, page):
         del unused_root
 
+        limit, page = check_and_get_pagination_values(limit, page)
         user = get_user_from_context(info)
 
         try: 
             if  user.is_authenticated:
-                product_data = user.purchased_items.all()
-                return product_data
+                all_data = user.purchased_items.all().order_by("composition__name")
+
+                filtered_data = search_through_composition(all_data, search)
+
+                paginated_data, is_first, is_last, page_position = paginate(
+                    filtered_data, limit, page
+                )
+
+                return_info =  {
+                   "data": paginated_data,
+                   "is_first": is_first,
+                   "is_last": is_last,
+                   "page_position": page_position
+                }
+                return return_info
+
             else:
-                return []
+                return {}
+
         except:
-            return []
+            return {}
 

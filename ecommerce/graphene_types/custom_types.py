@@ -1,5 +1,5 @@
 import graphene
-from .model_based_types import CartType, ProductType, CompositionType, ComposerType
+from .model_based_types import CartType, ProductType, DataAfterPurchaseType
 from graphql_auth.schema import UserNode
 
 
@@ -9,6 +9,12 @@ class PagePositionType(graphene.ObjectType):
 
 class AllProductsDataType(graphene.ObjectType):
     products = graphene.List(ProductType, required=True)
+    is_first = graphene.Boolean(required=True)
+    is_last = graphene.Boolean(required=True)
+    page_position = graphene.Field(PagePositionType, required=True)
+
+class AllPurchasedDataType(graphene.ObjectType):
+    data = graphene.List(DataAfterPurchaseType, required=True)
     is_first = graphene.Boolean(required=True)
     is_last = graphene.Boolean(required=True)
     page_position = graphene.Field(PagePositionType, required=True)
