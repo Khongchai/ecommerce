@@ -1,3 +1,6 @@
+from json import dumps
+
+from graphene.test import Client
 from users.models import CustomUser
 from store.models import Composer, Composition, DataAfterPurchase, Product
 import graphene
@@ -220,6 +223,7 @@ class TestPurchasedDataPaginatedQueries(GraphQLTestCase):
     maxDiff = None
 
     def setUp(self):
+        # Given a user who has 11 products,
         user = CustomUser.objects.create(
             username="user_1",
             email="user@user.com",
@@ -235,22 +239,105 @@ class TestPurchasedDataPaginatedQueries(GraphQLTestCase):
             user.purchased_items.add(data_after_purchased)
 
 
-    def test_purchased_data_paginated_query_first_page(self):
-        # query = """
-        #      query {
-        #         productsPurchasedByCurrentUser(page: 1){
-        #             isFirst
-        #             isLast
-        #             data{
-                        
-        #             }
-        #         }
-        #      }
-        # """
-        pass
+    def test_when_query_the_first_page(self):
+        user = CustomUser.objects.get(username="user_1")
+        
+        class Query(ProductsQuery, graphene.ObjectType):
+            pass
+        schema = graphene.Schema(query=Query)
+        query = """
+             query {
+                productsPurchasedByCurrentUser(page: 1, limit: 5, search: ""){
+                    isFirst
+                    isLast
+                    data{
+                        composition{
+                            name
+                        }
+                    }
+                    pagePosition{
+                        page
+                        of
+                    }
+                }
+             }
+        """
+        client = Client(schema)
+        executed = client.execute(query, context={"user": user})
+        result = executed["data"]["productsPurchasedByCurrentUser"]
 
-    def test_purchased_data_paginated_query_second_page(self):
-        pass
+        # then data should be like this
+        self.assertEqual(len(result["data"]), 5)
+        self.assertEqual(result["isFirst"], True)
+        self.assertEqual(result["isLast"], False)
+        self.assertEqual(result["pagePosition"]["page"], 1)
+        self.assertEqual(result["pagePosition"]["of"], 3)
+        
 
-    def test_purchased_data_paginated_query_last_page(self):
-        pass
+    def test_when_query_the_second_page(self):
+        user = CustomUser.objects.get(username="user_1")
+        
+        class Query(ProductsQuery, graphene.ObjectType):
+            pass
+        schema = graphene.Schema(query=Query)
+        query = """
+             query {
+                productsPurchasedByCurrentUser(page: 2, limit: 5, search: ""){
+                    isFirst
+                    isLast
+                    data{
+                        composition{
+                            name
+                        }
+                    }
+                    pagePosition{
+                        page
+                        of
+                    }
+                }
+             }
+        """
+        client = Client(schema)
+        executed = client.execute(query, context={"user": user})
+        result = executed["data"]["productsPurchasedByCurrentUser"]
+
+        # then data should be like this
+        self.assertEqual(len(result["data"]), 5)
+        self.assertEqual(result["isFirst"], False)
+        self.assertEqual(result["isLast"], False)
+        self.assertEqual(result["pagePosition"]["page"], 2)
+        self.assertEqual(result["pagePosition"]["of"], 3)
+
+    def test_when_query_the_last_page(self):
+        user = CustomUser.objects.get(username="user_1")
+        
+        class Query(ProductsQuery, graphene.ObjectType):
+            pass
+        schema = graphene.Schema(query=Query)
+        query = """
+             query {
+                productsPurchasedByCurrentUser(page: 3, limit: 5, search: ""){
+                    isFirst
+                    isLast
+                    data{
+                        composition{
+                            name
+                        }
+                    }
+                    pagePosition{
+                        page
+                        of
+                    }
+                }
+             }
+        """
+        client = Client(schema)
+        executed = client.execute(query, context={"user": user})
+        result = executed["data"]["productsPurchasedByCurrentUser"]
+
+        # then data should be like this
+        self.assertEqual(len(result["data"]), 1)
+        self.assertEqual(result["isFirst"], False)
+        self.assertEqual(result["isLast"], True)
+        self.assertEqual(result["pagePosition"]["page"], 3)
+        self.assertEqual(result["pagePosition"]["of"], 3)
