@@ -20,10 +20,10 @@ class ValidateEmailExistAndSendPasswordResetToken(graphene.Mutation):
     def mutate(cls, unused_root, unused_info, email):
         del unused_root, unused_info
 
-        user = CustomUser.objects.get(email=email)
-
-        if not user:
-            return ValidateEmailExistAndSendPasswordResetToken(success=False)
+        try: 
+            user = CustomUser.objects.get(email=email)
+        except:
+            return  ValidateEmailExistAndSendPasswordResetToken(success=False)
 
         token = get_token(user, "password_reset")
 

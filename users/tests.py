@@ -20,8 +20,6 @@ class TestAuthentications(GraphQLTestCase):
 
 
     def test_should_return_valid_token_when_email_enters(self):
-        print(self.user_old_password_hash)
-
         # when they click on a forget password link, an email will be sent
         # through the following mutation,
         class Mutation(CustomAuthMutations, AuthMutations, graphene.ObjectType):
@@ -53,10 +51,4 @@ class TestAuthentications(GraphQLTestCase):
         result_password_reset = client.execute(reset_password_mutation, variables=variables)["data"]["forgotPassword"]
         #success = true suffice, changing password is already tested: https://github.com/PedroBern/django-graphql-auth/blob/master/tests/test_password_reset.py
         self.assertTrue(result_password_reset["success"])
-
-
-
-
-        
-        
 
