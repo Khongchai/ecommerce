@@ -4,7 +4,7 @@ import uuid
 import graphene
 from django.test import TestCase
 from ecommerce.graphene_mutations.cart_mutations import CartMutations
-from ecommerce.graphene_mutations.user_mutations import AuthMutation
+from ecommerce.graphene_mutations.user_mutations import AuthMutations
 from ecommerce.graphene_queries.cart_queries import CartsQuery
 from graphene.test import Client
 from graphene_django.utils.testing import GraphQLTestCase
@@ -206,7 +206,7 @@ class TestCartCompletionQueriesAndMutations(GraphQLTestCase):
         )
 
         # when calling getOrCreateAndGetCart mutation 
-        class Mutation(CartMutations, AuthMutation, graphene.ObjectType):
+        class Mutation(CartMutations, AuthMutations, graphene.ObjectType):
             pass
 
         schema = graphene.Schema(mutation=Mutation)

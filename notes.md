@@ -1,5 +1,7 @@
-refactor test_store_queries into separate test files and then write test for the non-existent paginatedPurchasedDataQueries.
+take a look at TODO in user_mutations.py
 
-Search and pagination for dashboard.
+forgot password functionality!
 
-Forget password functionality!
+Don't forget the midilLink!
+
+make actual fixtures && deploy
