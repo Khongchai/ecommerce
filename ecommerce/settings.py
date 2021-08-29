@@ -181,5 +181,6 @@ GRAPHQL_AUTH = {
         "password1": "String",
         "password2": "String",
         "is_student": "Boolean",
+        "school_or_university": "String",
     }
 }
