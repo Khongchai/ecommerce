@@ -16,9 +16,10 @@ class MeQueryExtended(graphene.ObjectType):
     me_extended = graphene.Field(MeExtendedType)
 
     def resolve_me_extended(self, info):
-        authenticated_user = info.context.user
-        cart ,_ = Cart.objects.get_or_create(customer=authenticated_user, complete=False, transaction_id=None)
+        user = info.context.user
+        if user.is_anonymous:
+            return None
+            
+        cart ,_ = Cart.objects.get_or_create(customer=user, complete=False, transaction_id=None)
 
-        if authenticated_user.is_authenticated:
-            return {"user": authenticated_user, "cart": cart}
-        raise ValueError("User is not logged in")
+        return {"user": user, "cart": cart}

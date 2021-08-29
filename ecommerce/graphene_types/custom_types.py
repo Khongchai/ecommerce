@@ -14,10 +14,10 @@ class AllProductsDataType(graphene.ObjectType):
     page_position = graphene.Field(PagePositionType, required=True)
 
 class AllPurchasedDataType(graphene.ObjectType):
-    data = graphene.List(DataAfterPurchaseType, required=True)
-    is_first = graphene.Boolean(required=True)
-    is_last = graphene.Boolean(required=True)
-    page_position = graphene.Field(PagePositionType, required=True)
+    data = graphene.List(DataAfterPurchaseType)
+    is_first = graphene.Boolean()
+    is_last = graphene.Boolean()
+    page_position = graphene.Field(PagePositionType)
 
 class MeExtendedType(graphene.ObjectType):
     user = graphene.Field(UserNode, required=True)
