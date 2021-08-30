@@ -43,6 +43,10 @@ def get_forgot_password_email(receiver_email: str, sender_email: str,
                             width: fit-content;
                             margin: 0 auto;
                          }}
+                         #expire-text{{
+                             text-align: center;
+                             width: 100%;
+                         }}
                     </style>
                 </head>
                 <body>
@@ -52,6 +56,7 @@ def get_forgot_password_email(receiver_email: str, sender_email: str,
                     <div id="button">
                         <a id="link" href={reset_password_link}>Reset Password</a>
                     </div>
+                    <p id="expire-text">This link expires after 1 hour.</p>
                 </body> 
             </html>
     """
