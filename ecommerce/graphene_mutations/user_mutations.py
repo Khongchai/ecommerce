@@ -1,8 +1,14 @@
+from ecommerce.email_templates.forgot_password import get_forgot_password_email
+import smtplib
+import ssl
+from ecommerce.settings import env
+
+
 import graphene
 from graphene import ObjectType
 from graphql_auth import mutations
-from users.models import CustomUser
 from graphql_auth.utils import get_token
+from users.models import CustomUser
 
 
 class ValidateEmailExistAndSendPasswordResetToken(graphene.Mutation):
@@ -27,8 +33,20 @@ class ValidateEmailExistAndSendPasswordResetToken(graphene.Mutation):
 
         token = get_token(user, "password_reset")
 
-        # Returning token is just in case, main purpose is for sending to the user's email.
+        sender_email = env("SENDER_EMAIL")
+        password = env("SENDER_PASSWORD")
+        receiver_email = email
+        port = 587
+        message = get_forgot_password_email(receiver_email, sender_email, user.username, token, env("FRONTEND_WEBSITE"))
+        smtp_server = "smtp.gmail.com"
 
+        context = ssl.create_default_context()
+        with smtplib.SMTP(smtp_server, port) as server:
+            server.starttls(context=context)
+            server.login(sender_email, password)
+            server.sendmail(sender_email, receiver_email, message)
+
+        # Returning token is just in case, main purpose is for sending to the user's email.
         return ValidateEmailExistAndSendPasswordResetToken(success=True, token=token)
 
 
