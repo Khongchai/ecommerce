@@ -1,9 +1,0 @@
-https://cloudinary.com/documentation/control_access_to_media << after user purchased
-
-
-
-Change product-cart relationship to manytomany (a product can be in many cart and many cart can have the same product)
-And also test it, still need some tests for user > 1.
-
-
-Read more about full text search
