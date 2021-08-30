@@ -41,14 +41,14 @@ class TestAuthentications(GraphQLTestCase):
         # using the built-in passwordReset mutation.
         new_password = "superstrongpassword_2"
         reset_password_mutation = """
-            mutation forgotPassword($token: String!, $newPassword1: String!, $newPassword2: String!){
-                forgotPassword(token: $token, newPassword1: $newPassword1, newPassword2: $newPassword2){
+            mutation resetPassword($token: String!, $newPassword1: String!, $newPassword2: String!){
+                resetPassword(token: $token, newPassword1: $newPassword1, newPassword2: $newPassword2){
                     success
                 }
             } 
         """
         variables = {"token": token, "newPassword1": new_password, "newPassword2": new_password } 
-        result_password_reset = client.execute(reset_password_mutation, variables=variables)["data"]["forgotPassword"]
+        result_password_reset = client.execute(reset_password_mutation, variables=variables)["data"]["resetPassword"]
         #success = true suffice, changing password is already tested: https://github.com/PedroBern/django-graphql-auth/blob/master/tests/test_password_reset.py
         self.assertTrue(result_password_reset["success"])
 

@@ -1,4 +1,4 @@
-from ecommerce.email_templates.forgot_password import get_forgot_password_email
+from ecommerce.email_templates.get_forgot_password_email_body import get_forgot_password_email
 import smtplib
 import ssl
 from ecommerce.settings import env

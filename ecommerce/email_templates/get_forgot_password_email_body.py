@@ -8,7 +8,7 @@ def get_forgot_password_email(receiver_email: str, sender_email: str,
     message["Subject"] = "Reset Password"
     message["From"] = sender_email
     message["To"] = receiver_email
-    reset_password_link = frontend_website + f"/change-password/{token}"
+    reset_password_link = frontend_website + f"/change-password/{token}?email={receiver_email}"
 
     text = f"""\
         Hi {username}, 
