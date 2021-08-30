@@ -56,7 +56,7 @@ class AuthMutations(ObjectType):
     token_auth = mutations.ObtainJSONWebToken.Field()
     update_account = mutations.UpdateAccount.Field()
     refresh_token = mutations.RefreshToken.Field()
-    forgot_password = mutations.PasswordReset.Field()
+    reset_password = mutations.PasswordReset.Field()
 
 class CustomAuthMutations(ObjectType):
     send_reset_password_email = ValidateEmailExistAndSendPasswordResetToken.Field()
