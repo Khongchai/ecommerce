@@ -37,7 +37,7 @@ class ValidateEmailExistAndSendPasswordResetToken(graphene.Mutation):
         password = env("SENDER_PASSWORD")
         receiver_email = email
         port = 587
-        message = get_forgot_password_email(receiver_email, sender_email, user.username, token, env("FRONTEND_WEBSITE"))
+        message = get_forgot_password_email(receiver_email, sender_email, user.username, token, "http://localhost:3000")
         smtp_server = "smtp.gmail.com"
 
         context = ssl.create_default_context()
