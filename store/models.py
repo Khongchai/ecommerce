@@ -25,6 +25,7 @@ class DataAfterPurchase(models.Model):
     wav_link = models.URLField(max_length = 500, blank=True, null=True)
     flac_link = models.URLField(max_length = 500, blank=True, null=True)
     pdf_link = models.URLField(max_length = 500, blank=True, null=True)
+    metronome_link = models.URLField(max_length = 500, blank=True, null=True)
 
     # For preview when user clicks on the image.
     youtube_link = models.URLField(max_length = 500, blank=True, null=True)
