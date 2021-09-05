@@ -1,1 +1,3 @@
-make actual fixtures && deploy
+push to prod
+
+update fixtures through admin
