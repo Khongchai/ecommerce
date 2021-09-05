@@ -1,0 +1,33 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres
+    restart: always
+    environment:
+      - POSTGRES_DB=accompaniment
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - postgres:/data/postgres
+    ports:
+      - "5432:5432"
+
+  web:
+    build: .
+    command: >
+      bash -c "python manage.py migrate
+      && python manage.py loaddata initial_composers.json
+      && python manage.py loaddata initial_compositions.json
+      && python manage.py loaddata initial_dataAfterPurchase.json
+      && python manage.py loaddata initial_product.json
+      && python manage.py runserver --settings=ecommerce.settings_production 0.0.0.0:8000"
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+
+volumes:
+  postgres:
