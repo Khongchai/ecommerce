@@ -16,7 +16,8 @@ services:
   web:
     build: .
     command: >
-      bash -c "python manage.py migrate
+      bash -c "export DJANGO_SETTINGS_MODULE=ecommerce.settings_production
+      && python manage.py migrate
       && python manage.py loaddata initial_composers.json
       && python manage.py loaddata initial_compositions.json
       && python manage.py loaddata initial_dataAfterPurchase.json
