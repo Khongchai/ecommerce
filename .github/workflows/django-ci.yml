@@ -30,7 +30,7 @@ jobs:
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: accompaniment
         ports:
-          - "5432:5432"
+          - 5432:5432
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
     steps:
@@ -43,10 +43,10 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-      - name: Set settings.py
-        run: export DJANGO_SETTINGS_MODULE=ecommerce.settings_production
-      - name: Run migrations
-        run: python manage.py migrate
+      - name: Run migrations with production settings
+        run: |
+          export DJANGO_SETTINGS_MODULE=ecommerce.settings_production
+          python manage.py migrate
       - name: Run Tests
         run: |
           python manage.py test
