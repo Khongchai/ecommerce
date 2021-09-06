@@ -22,7 +22,7 @@ services:
       && python manage.py loaddata initial_compositions.json
       && python manage.py loaddata initial_dataAfterPurchase.json
       && python manage.py loaddata initial_product.json
-      && python manage.py runserver --settings=ecommerce.settings_production 0.0.0.0:8000"
+      && python manage.py runserver 0.0.0.0:8000"
     volumes:
       - .:/code
     ports:
