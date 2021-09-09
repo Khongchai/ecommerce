@@ -5,7 +5,7 @@ DEBUG = False
 
 ALLOWED_HOSTS = [".herokuapp.com"]
 
-CORS_ALLOWED_ORIGINS = []
+CORS_ALLOWED_ORIGINS = ["musical-companion.vercel.app", "musical-companion.com"]
 
 WSGI_APPLICATION = 'ecommerce.wsgi.application'
 
