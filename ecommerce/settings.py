@@ -103,8 +103,8 @@ DATABASES = {
         'NAME': env('DATABASE_NAME'),
         'USER': env('DATABASE_USER'),
         'PASSWORD': env('DATABASE_PASSWORD'),
-        'HOST': "localhost",
-        'PORT': ""
+        'HOST': env('DATABASE_HOST') if env('DATABASE_HOST') else "localhost",
+        'PORT': env('DATABASE_PORT') if env('DATABASE_PORT') else "",
         }
 }
 
